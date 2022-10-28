@@ -8,7 +8,7 @@ class TimezoneMiddleware:
         user = request.user
 
         try:
-            tzname = user.timezone.name if user.timezone else None
+            tzname = user.tz.name if user.tz else None
             timezone.activate(tzname)
         except:
             timezone.deactivate()

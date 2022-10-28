@@ -14,3 +14,9 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'whatsappclone.settings.development')
 
 application = get_asgi_application()
+
+# message = Message(
+#     'Here is the message',
+#     '+17432107750',
+#     ['+2348133831036']
+# )

@@ -27,9 +27,8 @@ class UserAdmin(BaseUserAdmin):
         "pkid",
         "id",
         "email",
-        "username",
-        "first_name",
-        "last_name",
+        "name",
+        "phone",
         "is_staff",
         "is_active",
     ]
@@ -37,20 +36,19 @@ class UserAdmin(BaseUserAdmin):
     list_display_links = ["id", "email"]
     list_filter = [
         "email",
-        "username",
-        "first_name",
-        "last_name",
+        "name",
+        "phone",
         "is_staff",
         "is_active",
     ]
     fieldsets = (
         (
             _("Login Credentials"),
-            {"fields": ("email", "password")},
+            {"fields": ("phone", "password")},
         ),
         (
             _("Personal Information"),
-            {"fields": ("username", "first_name", "last_name")},
+            {"fields": ("name", "email", "tz")},
         ),
         (
             _("Permissions and Groups"),
@@ -71,14 +69,15 @@ class UserAdmin(BaseUserAdmin):
     )
 
     add_fieldsets = (
-        None,
-        {
-            "classes": ("wide",),
-            "fields": ("email", "password1", "password2", "is_staff", "is-active"),
-        },
+        (None,
+            {
+                "classes": ("wide",),
+                "fields": ("name", "email", "phone", "tz", "password1", "password2", "is_staff", "is_active"),
+            }
+        ),
     )
 
-    search_fields = ["email", "username", "first_name", "last_name"]
+    search_fields = ["email", "name", "phone"]
 
     def render_change_form(self, request, context, obj, add=False, change=False, form_url=''):
         if not '/add/' in request.path:
