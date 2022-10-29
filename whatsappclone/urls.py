@@ -2,9 +2,11 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
+from apps.accounts.forms import MyAuthForm
 from apps.common import views
-import debug_toolbar
+from django.contrib.auth.views import LoginView
 
+import debug_toolbar
 # handler404 = views.handler404
 # handler500 = views.handler500
 

@@ -58,6 +58,10 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 AUTH_USER_MODEL = 'accounts.User'
 
+AUTHENTICATION_BACKENDS = [
+    'apps.accounts.backends.EmailOrPhoneAuthenticationBackend'
+]
+
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -212,16 +216,16 @@ JAZZMIN_SETTINGS = {
     "site_header": "WWC V1",
 
     # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "media/logo.jpeg",
-
-    # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
-    "login_logo": "images/logo.jpeg",
+    "site_logo": "/media/logo.jpeg",
 
     # CSS classes that are applied to the logo above
     "site_logo_classes": "img-circle",
 
+    # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
+    "login_logo": "/media/logo.jpeg",
+
     # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
-    "site_icon": None,
+    "site_icon": "/media/whatsapp.png",
 
     # Welcome text on the login screen
     "welcome_sign": "Welcome to the Whatsapp Web Clone v1 Admin Section",
