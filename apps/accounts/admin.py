@@ -5,8 +5,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.utils.translation import gettext_lazy as _
 
-from . forms import CustomUserChangeForm, CustomUserCreationForm
-from . models import User
+from . forms import CustomAdminUserChangeForm, CustomAdminUserCreationForm
+from . models import BlockedContact, Timezone, User
 
 class Group(DjangoGroup):
     class Meta:
@@ -20,8 +20,8 @@ class GroupAdmin(BaseGroupAdmin):
 
 class UserAdmin(BaseUserAdmin):
     ordering = ["email"]
-    add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
+    add_form = CustomAdminUserCreationForm
+    form = CustomAdminUserChangeForm
     model = User
 
     list_display = [
@@ -49,7 +49,19 @@ class UserAdmin(BaseUserAdmin):
         ),
         (
             _("Personal Information"),
-            {"fields": ("name", "email", "tz")},
+            {"fields": ("name", "email", "tz", "status", "avatar")},
+        ),
+        (
+            _("Page Look"),
+            {"fields": ("theme", "wallpaper")},
+        ),
+        (
+            _("Privacy Settings"),
+            {"fields": ("last_seen", "avatar_status", "about_status", "group_status", "message_timer", "read_receipts", "blocked_contacts")},
+        ),
+        (
+            _("Notification Settings"),
+            {"fields": ("message_notifications", "show_previews", "show_reaction_notifications", "sounds", "security_notifications")},
         ),
         (
             _("Permissions and Groups"),
@@ -97,6 +109,18 @@ class UserAdmin(BaseUserAdmin):
            self.readonly_fields = ['groups', 'user_permissions', 'is_staff', 'is_superuser', 'is_active']
        return self.readonly_fields
 
+class BlockedContactAdmin(admin.ModelAdmin):
+    list_display = ["blocker", "blockee", "created_at"]
+    list_filter = ["blocker", "blockee", "created_at"]
+
+class TimezoneAdmin(admin.ModelAdmin):
+    list_display = ["name", "created_at"]
+    list_filter = ["name", "created_at"]
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(BlockedContact, BlockedContactAdmin)
+admin.site.register(Timezone, TimezoneAdmin)
+
 admin.site.register(Group, GroupAdmin)
 admin.site.unregister(DjangoGroup)

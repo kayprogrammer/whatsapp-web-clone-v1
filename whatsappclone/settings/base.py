@@ -294,8 +294,8 @@ JAZZMIN_SETTINGS = {
     "icons": {
         "accounts.Group": "fas fa-users",
         "accounts.user": "fas fa-user-cog",
-        # "news.article": "fas fa-newspaper",
-        # "news.category": "fas fa-list-alt",
+        "accounts.blockedcontact": "fas fa-ban",
+        "accounts.timezone": "fas fa-clock",
         # "news.articleviews": "fas fa-eye",
         # "others.about": "fas fa-info-circle",
         # "others.message": "fas fa-envelope",
