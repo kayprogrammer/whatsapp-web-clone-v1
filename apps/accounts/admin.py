@@ -45,11 +45,11 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (
             _("Login Credentials"),
-            {"fields": ("phone", "password")},
+            {"fields": ("email", "phone", "password")},
         ),
         (
             _("Personal Information"),
-            {"fields": ("name", "email", "tz", "status", "avatar")},
+            {"fields": ("name", "tz", "status", "avatar")},
         ),
         (
             _("Page Look"),

@@ -29,26 +29,31 @@ class MyAuthForm(AuthenticationForm):
 #----------------------------------------------------------#
 
 #-----GENERAL USER CREATION AND AUTHENTICATION-------------#
+class CustomErrorMessages:
+    email = {
+        'unique': 'Email address already registered',
+        'required': 'This field is required',
+        'invalid': 'Enter a valid email address',
+    }
+    phone = {
+        'unique': 'Phone number already registered',
+        'required': 'This field is required',
+    }
+    tz = {
+        'does_not_exist': 'Invalid timezone',
+    }
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder": "Email Address", "class": "text email"}))
+    email = forms.EmailField(error_messages=CustomErrorMessages.email, widget=forms.EmailInput(attrs={"placeholder": "Email Address", "class": "text email"}))
     name = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Name", "class": "text"}))
-    phone = forms.CharField(max_length=15, validators=[phone_regex_pattern], widget=forms.TextInput(attrs={"placeholder": "Phone Number", "class": "text email"}))
-    tz = forms.ModelChoiceField(queryset=Timezone.objects.all())
+    phone = forms.CharField(error_messages=CustomErrorMessages.phone, max_length=15, validators=[phone_regex_pattern], widget=forms.TextInput(attrs={"placeholder": "Phone Number", "class": "text email"}))
+    tz = forms.ModelChoiceField(error_messages=CustomErrorMessages.tz, queryset=Timezone.objects.all())
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Password", "class": "text"}))
-    password2 = forms.EmailField(widget=forms.PasswordInput(attrs={"placeholder": "Confirm Password", "class": "text w3lpass"}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Confirm Password", "class": "text w3lpass"}))
     terms_agreement = forms.BooleanField(widget=forms.CheckboxInput(attrs={"class": "checkbox"}))
 
     class Meta:
         model = User
         fields = ["email", "name", "phone", "tz", "password1", "password2", "terms_agreement"]
 
-    def clean_password2(self):
-        super(RegisterForm, self).clean()
-
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        if not password1 == password2:
-            return forms.ValidationError('Password Mismatch')
-        return password2
 #----------------------------------------------------------#
 

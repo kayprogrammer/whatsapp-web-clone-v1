@@ -1,0 +1,51 @@
+{% extends "accounts/index.html" %}
+{% load static %}
+{% block title %}Register{% endblock %}
+{% block content %}
+	<h1 style="font-weight: bold;">WWC V1 LOGIN FORM</h1>
+	<div class="main-agileinfo">
+		<div class="agileits-top">
+			<form method="post" class="login-form">
+				{% csrf_token %}
+				
+				<input type="text" name="email_or_phone" placeholder="Email or Phone" class="text" required/>
+				<p class="error"></p>
+                <input type="password" name="password" placeholder="Password" class="text" required/>
+				<p class="error"></p>
+
+				<div class="wthree-text" >
+				<input type="submit" value="LOGIN">
+			</form>
+			<p>Don't have an Account? <a href="{% url 'register' %}"> Register Now!</a></p>
+		</div>
+	</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('.login-form').on('submit', function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: "{% url 'login' %}",
+				data: $(this).serialize(),
+				type: 'POST',
+				dataType: 'json',
+				success: function(response){
+					console.log(response)
+					if(response?.success){
+						Toast.fire({
+							icon: 'success',
+							title: response?.success
+						})
+					} else if (response?.error){
+                        Toast.fire({
+							icon: 'error',
+							title: response?.error
+						})
+					}
+				}
+
+			})
+		})
+    </script>
+{% endblock %}

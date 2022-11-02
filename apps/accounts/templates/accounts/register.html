@@ -1,79 +1,42 @@
+{% extends "accounts/index.html" %}
 {% load static %}
-<!--
-Author: Colorlib
-Author URL: https://colorlib.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
-<!DOCTYPE html>
-<html>
-<head>
-<title>Whatsapp Web Clone V1 SignUp Form</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- Custom Theme files -->
-<link href="{% static 'css/register.css' %}?{% now 'U' %}" rel="stylesheet" type="text/css" media="all" />
-<link rel="shortcut icon" href="{% static 'media/whatsapp.png' %}" type="image/x-icon">
+{% block title %}Register{% endblock %}
+{% block content %}
+	<h1 style="font-weight: bold;">WWC V1 SIGNUP FORM</h1>
+	<div class="main-agileinfo">
+		<div class="agileits-top">
+			<form method="post" class="register-form">
+				{% csrf_token %}
+				{{form.name}}
+				<p class="name-error"></p>
+				{{form.email}}
+				<p class="email-error"></p>
+				{{form.phone}}
+				<p class="phone-error"></p>
+				{{form.tz}}
+				<p class="tz-error"></p>
+				{{form.password1}}
+				<p class="password1-error"></p>
+				{{form.password2}}
+				<p class="password2-error"></p>
 
-<!-- //Custom Theme files -->
-<!-- web font -->
-<link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
-<!-- //web font -->
-</head>
-<body>
-	<!-- main -->
-	<div class="main-w3layouts wrapper">
-		<h1 style="font-weight: bold;">WWC V1 SIGNUP FORM</h1>
-		<div class="main-agileinfo">
-			<div class="agileits-top">
-				<form method="post" class="register-form">
-                    {% csrf_token %}
-                    {{form.name}}
-                    {{form.name.errors}}
-                    {{form.email}}
-                    {{form.errors.email}}
-                    {{form.phone}}
-                    {{form.phone.errors}}
-                    {{form.tz}}
-                    {{form.tz.errors}}
-                    {{form.password1}}
-                    {{form.password1.errors}}
-                    {{form.password2}}
-                    {{form.password2.errors}}
-                    <div class="wthree-text">
-						<label class="anim">
-							{{form.terms_agreement}}
-							<span>I Agree To The Terms & Conditions</span>
-						</label>
-						<div class="clear"> </div>
-					</div>
-					<input type="submit" value="SIGNUP">
-				</form>
-				<p>Don't have an Account? <a href="#"> Login Now!</a></p>
-			</div>
+				<div class="wthree-text" >
+					<label class="anim">
+						{{form.terms_agreement}}
+						<span>I Agree To The Terms & Conditions</span>
+					</label>
+					<div class="clear"> </div>
+				</div>
+				<input type="submit" value="SIGNUP">
+			</form>
+			<p>Already have an Account? <a href="{% url 'login' %}"> Login Now!</a></p>
 		</div>
-		<!-- copyright -->
-		<div class="colorlibcopy-agile">
-			<p>© {% now "Y" %} Whatsapp Web Clone V1. All rights reserved | Design by <a href="https://colorlib.com/" target="_blank">Colorlib</a></p>
-		</div>
-		<!-- //copyright -->
-		<ul class="colorlib-bubbles">
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-		</ul>
 	</div>
-	<!-- //main -->
-    <script>
-        window.onload = function(){
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		window.onload = function(){
             
             var localtz = Intl.DateTimeFormat().resolvedOptions().timeZone // Get local timezone
             var select_element = document.getElementById('id_tz') // Get select element
@@ -89,6 +52,44 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 select_element.value = ''                
             }
         }
+
+
+		$('.register-form').on('submit', function(e) {
+			$('.register-form p').html('')
+			e.preventDefault();
+			$.ajax({
+				url: '/accounts/register/',
+				data: $(this).serialize(),
+				type: 'POST',
+				dataType: 'json',
+				success: function(response){
+					console.log(response)
+					if(response?.success){
+						Toast.fire({
+							icon: 'success',
+							title: response?.success
+						})
+					} else if (response?.errors){
+						errors = JSON.parse(response.errors)
+						Object.keys(errors).forEach(function(key) {
+							var err_message = errors[key][0]['message']
+							var err_code = errors[key][0]['code']
+
+							$(`.${key}-error`).html(err_message)
+							if(err_code === "password_too_common" || err_code === "password_too_similar"){
+								var password_err_msg = err_message.substring(err_message.indexOf(' ') + 1) // Removes first word in sentence
+								var capitalized_password_err_msg = password_err_msg.charAt(0).toUpperCase() + password_err_msg.slice(1) // Capitalizes the sentence
+								$(`.${key}-error`).html(capitalized_password_err_msg)
+							}
+							if(err_code === "password_mismatch"){
+								$(`.${key}-error`).html("Passwords mismatch")
+							}
+						})
+					}
+					;
+				}
+
+			})
+		})
     </script>
-</body>
-</html>
+{% endblock %}
