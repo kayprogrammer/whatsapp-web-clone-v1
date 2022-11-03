@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm
+from django.utils.translation import gettext_lazy as _
 from . models import Timezone, User
 from . validators import phone_regex_pattern
 
@@ -18,6 +19,13 @@ class CustomAdminUserChangeForm(UserChangeForm):
         error_class = "error"
 
 class MyAuthForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': _(
+            "Invalid credentials. "
+            "Fields may be case-sensitive."
+        ),
+        'inactive': _("This account is inactive."),
+    }
     class Meta:
         model = User
         fields = ['username', 'password']

@@ -231,7 +231,7 @@ JAZZMIN_SETTINGS = {
     "copyright": "Whatsapp Web Clone v1 Ltd",
 
     # The model admin to search from the search bar, search bar omitted if excluded
-    "search_model": "news.User",
+    "search_model": "accounts.User",
 
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": "avatar",
@@ -251,8 +251,10 @@ JAZZMIN_SETTINGS = {
 
         # App with dropdown menu to all its models pages (Permissions checked against models)
         {"app": "accounts"},
-        {"app": "news"},
-        {"app": "others"},
+        {"app": "chat"},
+        {"app": "status"},
+        {"app": "common"},
+
 
     ],
 
@@ -262,8 +264,8 @@ JAZZMIN_SETTINGS = {
 
     # Additional links to include in the user menu on the top right ("app" url type is not allowed)
     "usermenu_links": [
-        {"name": "NewsFeed Platform", "url": "/", "new_window": True},
-        {"model": "auth.user"}
+        {"name": "WWC V1 FrontPage", "url": "/", "new_window": True},
+        {"model": "accounts.user"}
     ],
 
     #############
