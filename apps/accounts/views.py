@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from . mixins import LogoutRequiredMixin
 from . senders import Util, generate_token
@@ -118,3 +119,8 @@ class LoginView(LogoutRequiredMixin, View):
 
         login(request, user)
         return JsonResponse({'success': 'Login successful'})
+
+class LogoutView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect(reverse('login'))

@@ -35,7 +35,8 @@
 					if(response?.success){
 						Toast.fire({
 							icon: 'success',
-							title: response?.success
+							title: response?.success,
+							timer: 1200
 						}).then(function() {
 							window.location.href = "/"
 						})
