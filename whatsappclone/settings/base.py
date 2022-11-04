@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
     'cloudinary',
     'debug_toolbar',
     'anymail',
+    'sweetify',
 ]
 
 LOCAL_APPS = [
@@ -61,6 +62,8 @@ AUTH_USER_MODEL = 'accounts.User'
 AUTHENTICATION_BACKENDS = [
     'apps.accounts.backends.EmailOrPhoneAuthenticationBackend'
 ]
+
+SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -160,6 +163,7 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 #SMS Settings
 SMS_BACKEND = 'sms.backends.twilio.SmsBackend'
+DEFAULT_FROM_PHONE = config('DEFAULT_FROM_PHONE')
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 
@@ -167,7 +171,7 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-SITE_NAME = "Whatsapp Web Clone V1"
+SITE_NAME = config('SITE_NAME')
 
 logger = logging.getLogger(__name__)
 

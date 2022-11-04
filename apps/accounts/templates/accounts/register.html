@@ -65,10 +65,17 @@
 				success: function(response){
 					console.log(response)
 					if(response?.success){
-						Toast.fire({
-							icon: 'success',
-							title: response?.success
+						document.cookie = 'phone=' + response?.user?.phone + ";domain=;path=/"
+						Swal.fire({
+							title: "Registration successful",
+							text: "Check your email for activation link",
+							icon: "success",
+							timer: "3500",
+							button: "Ok"
+						}).then(function(){
+							window.location.href = "/"
 						})
+						
 					} else if (response?.errors){
 						errors = JSON.parse(response.errors)
 						Object.keys(errors).forEach(function(key) {

@@ -1,0 +1,82 @@
+{% extends "accounts/index.html" %}
+{% load static %}
+{% block title %}Verify Phone Number{% endblock %}
+{% block content %}
+	<h1 style="font-weight: bold;">WWC V1 VERIFY PHONE NUMBER</h1>
+	<div class="main-agileinfo">
+		<div class="agileits-top">
+			<p style="font-weight: bold; margin-bottom: 10px;">Your Email was verified successfully! <br>Complete verification by entering the 6 digit <br>code sent to your phone number!</p>
+			<form method="post" class="otp-form">
+				{% csrf_token %}
+				{{form.otp}}
+				<input type="submit" value="SUBMIT">
+			</form>
+			<p>Didn't get an OTP? <a style="cursor: pointer;" class="resend-otp"> Resend OTP!</a></p>
+		</div>
+	</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('.resend-otp').on('click', function(e){
+			e.preventDefault();
+			$.ajax({
+				url: "{% url 'resend-otp' %}",
+				type: 'POST',
+				success: function(response){
+					console.log(response)
+					if(response?.success){
+						Toast.fire({
+							icon: 'success',
+							title: "Otp Resent"
+						})
+						
+					}else if(response?.phone_verified){
+						Toast.fire({
+							icon: 'success',
+							title: "Phone already verified"
+						}).then(function() {
+							window.location.href = "/accounts/login/"
+						})
+					}else{
+						Toast.fire({
+							icon: 'error',
+							title: "Something went wrong"
+						}).then(function() {
+							window.location.href = "/"
+						})
+					}
+				}
+
+			})
+		})
+		$('.otp-form').on('submit', function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/accounts/verify-phone/',
+				data: $(this).serialize(),
+				type: 'POST',
+				dataType: 'json',
+				success: function(response){
+					if(response?.success){
+						Toast.fire({
+							icon: 'success',
+							title: "Verification successful"
+						}).then(function(){
+							window.location.href = "/accounts/login/"
+						})
+
+					} else if (response?.error){
+						error = JSON.parse(response.error)
+						Toast.fire({
+							icon: 'error',
+							title: error.otp[0].message
+						})
+                      
+					}
+				}
+
+			})
+		})
+    </script>
+{% endblock %}

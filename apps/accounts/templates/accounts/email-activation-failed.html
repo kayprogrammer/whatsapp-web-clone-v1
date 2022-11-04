@@ -1,0 +1,51 @@
+{% extends "accounts/index.html" %}
+{% load static %}
+{% block title %}Email Activation Failed{% endblock %}
+{% block content %}
+	<h1 style="font-weight: bold;">WWC V1 VERIFY PHONE NUMBER</h1>
+	<div class="main-agileinfo">
+		<div class="agileits-top">
+			<div>
+				<p>Sorry! This link is invalid or has been used already!</p>
+				<input class="resend-email" type="submit" value="RESEND ACTIVATION EMAIL">
+            </div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+
+		$('.resend-email').on('click', function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/accounts/resend-activation-email/',
+				type: 'POST',
+				success: function(response){
+					console.log(response)
+					if(response?.success){
+						Toast.fire({
+							icon: 'success',
+							title: 'Email resent'
+						})
+					} else if (response?.email_verified){
+                        Toast.fire({
+							icon: 'success',
+							title: 'Email already verified'
+						}).then(function(){
+							window.location.href = "/accounts/login/"
+						})
+					} else if(response.error){
+                        Toast.fire({
+							icon: 'error',
+							title: 'Something went wrong'
+						}).then(function() {
+							window.location.href = "/"
+						})
+                    }
+				}
+
+			})
+		})
+    </script>
+{% endblock %}

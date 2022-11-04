@@ -36,11 +36,25 @@
 						Toast.fire({
 							icon: 'success',
 							title: response?.success
+						}).then(function() {
+							window.location.href = "/"
 						})
-					} else if (response?.error){
+					} else if (response?.credentials_error){
                         Toast.fire({
 							icon: 'error',
-							title: response?.error
+							title: response?.credentials_error
+						})
+					} else if (response?.email_error){
+                        Toast.fire({
+							icon: 'error',
+							title: response?.email_error
+						})
+					} else if (response?.phone_error){
+                        Toast.fire({
+							icon: 'error',
+							title: response?.phone_error
+						}).then(function() {
+							window.location.href = "/accounts/verify-phone/"
 						})
 					}
 				}

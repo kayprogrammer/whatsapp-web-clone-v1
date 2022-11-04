@@ -1,8 +1,15 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
+from apps.accounts.senders import Util
+
 from . models import Timezone, User
 from . validators import phone_regex_pattern
+
+User = get_user_model()
 
 #-----ADMIN USER CREATION AND AUTHENTICATION------------#
 class CustomAdminUserCreationForm(UserCreationForm):
@@ -65,3 +72,23 @@ class CustomUserCreationForm(UserCreationForm):
 
 #----------------------------------------------------------#
 
+class PhoneVerificationForm(forms.Form):
+    otp = forms.IntegerField(widget=forms.NumberInput(attrs={"placeholder": "Enter Otp"}))
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(PhoneVerificationForm, self).__init__(*args, **kwargs)
+
+    def clean_otp(self):
+        request = self.request
+        print(request)
+        phone = request.COOKIES.get('phone')
+        otp = self.cleaned_data.get('otp')
+        user = User.objects.filter(phone=phone, otp=otp)
+        if not user.exists():
+            raise ValidationError('Invalid Otp', code="invalid_otp")
+        user = user.get()
+        user.is_phone_verified = True
+        user.save()
+        Util.send_welcome_email(request, user)
+        return otp
