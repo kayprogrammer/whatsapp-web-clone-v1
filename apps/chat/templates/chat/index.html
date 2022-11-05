@@ -59,7 +59,7 @@
             <div class="header">
                 <!-- Profile Picture -->
                 <div class="userImg">
-                    <img src="{% static 'media/Avatar-10.jpeg' %}" alt="" class="cover">
+                    <img src="{{request.user.avatarURL}}" alt="" class="cover">
                 </div>
 
                 <!-- Dropdown -->

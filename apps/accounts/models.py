@@ -45,9 +45,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name=(_("Email address")), unique=True)
     phone = models.CharField(max_length=20, verbose_name=(_('Phone Number')), unique=True)
     tz = models.ForeignKey(Timezone, on_delete=models.SET_NULL, verbose_name=(_('Timezone')), null=True)
-    avatar = models.ImageField(upload_to="whatsappclone/avatars/", null=True)
+    avatar = models.ImageField(upload_to="whatsappclonev1/avatars/", null=True)
     theme = models.CharField(max_length=100, choices=THEME_CHOICES, null=True)
-    wallpaper = models.ImageField(upload_to="whatsappclone/wallpapers/", null=True)
+    wallpaper = models.ImageField(upload_to="whatsappclonev1/wallpapers/", null=True)
     status = models.CharField(default="Hey There! I'm using Whatsapp Web Clone V1!", max_length=300)
 
     #---Privacy Settings---#
@@ -90,7 +90,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             url = self.avatar.url
         except:
-            url = ''
+            url = 'https://res.cloudinary.com/kay-development/image/upload/v1667610903/whatsappclonev1/default/Avatar-10_mvq1cm.jpg'
         return url
 
     def __str__(self):
