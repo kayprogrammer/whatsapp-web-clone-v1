@@ -7,7 +7,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView
 
 from . mixins import LogoutRequiredMixin
 from . senders import Util, generate_token
@@ -126,10 +126,20 @@ class LogoutView(LoginRequiredMixin, View):
         logout(request)
         return redirect(reverse('login'))
 
-class CustomPasswordResetView(PasswordResetView):
+class CustomPasswordResetView(LogoutRequiredMixin, PasswordResetView):
     # Taken from django.contrib.auth.views
     form_class = CustomPasswordResetForm
 
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+class CustomPasswordResetConfirmView(LogoutRequiredMixin, PasswordResetConfirmView):
     # Taken from django.contrib.auth.views
     form_class = CustomSetPasswordForm
+
+class CustomPasswordResetDoneView(LogoutRequiredMixin, PasswordResetDoneView):
+    # This is unnecessary as it can be done in the urls. Its just so that I can pass in Logout Required Mixin Easily
+    # Taken from django.contrib.auth.views
+    template_name="accounts/password-reset-sent.html"
+
+class CustomPasswordResetCompleteView(LogoutRequiredMixin, PasswordResetCompleteView):
+    # This is unnecessary as it can be done in the urls. Its just so that I can pass in Logout Required Mixin Easily
+    # Taken from django.contrib.auth.views
+    template_name="accounts/password-reset-done.html"
