@@ -7,10 +7,11 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 
 from . mixins import LogoutRequiredMixin
 from . senders import Util, generate_token
-from . forms import CustomUserCreationForm, PhoneVerificationForm
+from . forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomUserCreationForm, PhoneVerificationForm
 
 import sweetify
 
@@ -124,3 +125,11 @@ class LogoutView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect(reverse('login'))
+
+class CustomPasswordResetView(PasswordResetView):
+    # Taken from django.contrib.auth.views
+    form_class = CustomPasswordResetForm
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    # Taken from django.contrib.auth.views
+    form_class = CustomSetPasswordForm

@@ -1,11 +1,12 @@
 from django import forms
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 
-from apps.accounts.senders import Util
-
+from . senders import Util, MessageThread
 from . models import Timezone, User
 from . validators import phone_regex_pattern
 
@@ -92,3 +93,49 @@ class PhoneVerificationForm(forms.Form):
         user.save()
         Util.send_welcome_email(request, user)
         return otp
+
+class CustomPasswordResetForm(PasswordResetForm):
+    # Taken from django.contrib.auth.forms
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=254,
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "Email Address"}),
+    )
+
+    def send_mail(
+        self,
+        subject_template_name,
+        email_template_name,
+        context,
+        from_email,
+        to_email,
+        html_email_template_name=None,
+    ):
+        """
+        Send a django.core.mail.EmailMultiAlternatives to `to_email`.
+        """
+        subject = render_to_string(subject_template_name, context)
+        # Email subject *must not* contain newlines
+        subject = "".join(subject.splitlines())
+        body = render_to_string(email_template_name, context)
+
+        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        if html_email_template_name is not None:
+            html_email = render_to_string(html_email_template_name, context)
+            email_message.attach_alternative(html_email, "text/html")
+
+        MessageThread(email_message).start()
+
+class CustomSetPasswordForm(SetPasswordForm):
+    # Taken from django.contrib.auth.forms
+    new_password1 = forms.CharField(
+        label=_("New password"),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "New Password"}),
+        strip=False,
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    new_password2 = forms.CharField(
+        label=_("New password confirmation"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Repeat New Password"}),
+    )

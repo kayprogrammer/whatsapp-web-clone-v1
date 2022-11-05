@@ -16,7 +16,11 @@
 				<div class="wthree-text" >
 				<input type="submit" value="LOGIN">
 			</form>
-			<p>Don't have an Account? <a href="{% url 'register' %}"> Register Now!</a></p>
+			<p>
+				Don't have an Account? <a href="{% url 'register' %}"> Register Now!</a>
+				<br>Forgot Password? <a href="{% url 'reset_password' %}">Click Here</a>
+			</p>
+			
 		</div>
 	</div>
 {% endblock %}
