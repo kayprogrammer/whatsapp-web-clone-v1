@@ -10,7 +10,7 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name="logout"),
 
     # EMAIL ACTIVATION AND PHONE VERIFICATION
-    path('activate-user/<uidb64>/<token>', views.VerifyEmail.as_view(), name="activate"),
+    path('verify-email/<uidb64>/<token>', views.VerifyEmail.as_view(), name="verify-email"),
     path('verify-phone/', views.VerifyPhone.as_view(), name="verify-phone"),
     path('resend-activation-email/', views.ResendActivationEmail.as_view(), name="resend-activation-email"),
     path('resend-otp/', views.ResendOTP.as_view(), name="resend-otp"),

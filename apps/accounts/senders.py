@@ -10,11 +10,11 @@ import six
 import threading
 import random
 
-class TokenGenerator(PasswordResetTokenGenerator):
+class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (six.text_type(user.id)+six.text_type(timestamp)+six.text_type(user.is_email_verified))
 
-generate_token = TokenGenerator()
+email_verification_generate_token = EmailVerificationTokenGenerator()
 
 class MessageThread(threading.Thread):
 
@@ -35,7 +35,7 @@ class Util:
             'domain':current_site, 
             'site_name': settings.SITE_NAME,
             'uid': urlsafe_base64_encode(force_bytes(user.id)),
-            'token': generate_token.make_token(user)
+            'token': email_verification_generate_token.make_token(user)
         })
 
         email_message = EmailMessage(subject=subject, body=message, to=[user.email])

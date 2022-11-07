@@ -12,7 +12,7 @@ class CustomPasswordValidator():
         if len(password) < 8:
             raise ValidationError(_('Password must contain at least 8 characters'), code="password_too_short")
     def get_help_text(self):
-        return ""
+        return _("Passwords must contain letters, numbers and special characters. It must also contain at least 8 characters")
 
 phone_regex_pattern = RegexValidator(regex=r'^\+[0-9]*$', message='Phone number must be in this format: +1234567890')
 

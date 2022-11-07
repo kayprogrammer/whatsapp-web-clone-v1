@@ -173,6 +173,8 @@ INTERNAL_IPS = [
 
 SITE_NAME = config('SITE_NAME')
 
+PASSWORD_RESET_TIMEOUT = 900
+
 logger = logging.getLogger(__name__)
 
 LOG_LEVEL = "INFO"

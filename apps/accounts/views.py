@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView
 
 from . mixins import LogoutRequiredMixin
-from . senders import Util, generate_token
+from . senders import Util, email_verification_generate_token
 from . forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomUserCreationForm, PhoneVerificationForm
 
 import sweetify
@@ -48,7 +48,7 @@ class VerifyEmail(LogoutRequiredMixin, View):
         except Exception as e:
             user = None
 
-        if user and generate_token.check_token(user, kwargs.get('token')):
+        if user and email_verification_generate_token.check_token(user, kwargs.get('token')):
             user.is_email_verified = True
             user.save()
             Util.send_sms_otp(user)
