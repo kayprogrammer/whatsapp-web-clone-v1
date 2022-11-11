@@ -74,6 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     otp = models.IntegerField(null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_online = models.DateTimeField(default=timezone.now)
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = "phone"
