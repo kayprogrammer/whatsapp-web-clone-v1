@@ -20,7 +20,9 @@ class HomeView(LoginRequiredMixin, View):
         inbox_list = messages.annotate(other=Case(When(sender=user, then=F('receiver')), default=F('sender'), output_field=CharField())).order_by('other', '-created_at').distinct('other')
 
         sorted_inbox_list = sorted(inbox_list, key=lambda x: x.created_at, reverse=True)
-        return render(request, 'chat/index.html', context={'inbox_list': sorted_inbox_list, 'messages': messages})
+        all_users = User.objects.filter(is_email_verified=True, is_phone_verified=True, is_active=True).exclude(id=user.id).order_by('name')
+
+        return render(request, 'chat/index.html', context={'inbox_list': sorted_inbox_list, 'messages': messages, 'all_users': all_users})
 
 class ShowDirectMessagesView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
