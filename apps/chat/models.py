@@ -18,5 +18,3 @@ class Message(TimeStampedUUIDModel):
 
     class Meta:
         ordering = ["-created_at"]
-
-    

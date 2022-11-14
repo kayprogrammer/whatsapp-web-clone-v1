@@ -101,7 +101,8 @@ function closeForm() {
 
 
 function openRightSide(e) {
-    var phone = e.getAttribute('data-phone')
+    var phone = $(e).data('phone')
+    var unread_count_element = $(e).children('.h-text').children('.message-chat').children().children('div').children('span')
     $.ajax({
         url: "/chat/show-direct-messages/",
         type: "POST",
@@ -114,6 +115,7 @@ function openRightSide(e) {
                 document.getElementById("rightSide").style.display = "flex";
                 document.getElementById("Intro-Left").style.display = "none";
                 $('#rightSide').html(response.html_data)
+                unread_count_element.fadeOut(100)
             }
         }
     })

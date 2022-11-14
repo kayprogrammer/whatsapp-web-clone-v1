@@ -46,8 +46,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, verbose_name=(_('Phone Number')), unique=True)
     tz = models.ForeignKey(Timezone, on_delete=models.SET_NULL, verbose_name=(_('Timezone')), null=True)
     avatar = models.ImageField(upload_to="whatsappclonev1/avatars/", null=True)
-    theme = models.CharField(max_length=100, choices=THEME_CHOICES, null=True)
-    wallpaper = models.ImageField(upload_to="whatsappclonev1/wallpapers/", null=True)
+    theme = models.CharField(default="DARK", max_length=100, choices=THEME_CHOICES, null=True)
+    wallpaper = models.ImageField(upload_to="whatsappclonev1/wallpapers/", null=True, blank=True)
     status = models.CharField(default="Hey There! I'm using Whatsapp Web Clone V1!", max_length=300)
 
     #---Privacy Settings---#

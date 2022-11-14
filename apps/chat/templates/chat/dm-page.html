@@ -3,7 +3,7 @@
 <div class="header">
     <div class="imgText" role="button" onclick="openChatAbout()">
         <div class="userImg">
-            <img src="{{friend.avatarURL}}" alt="" class="cover">
+            <img style="object-position: top; object-fit: cover;" src="{{friend.avatarURL}}" alt="" class="cover">
         </div>
         <h4 title="Shayan" aria-label="Shayan">{{friend.name}}<br><span aria-label="online">online</span></h4>
     </div>
@@ -63,7 +63,7 @@
                 </p>
             {% endif %}
             {% if message.sender == request.user %}
-                <p class="chatMessage my-chat">
+                <p style="max-width: 45%;" class="chatMessage my-chat">
                     <span>{{message.text}} </span>
                     <span class="chat__msg-filler"> </span>
                     <span class="msg-footer">
@@ -85,7 +85,7 @@
                     </button>
                 </p>
             {% else %}
-                <p class="chatMessage frnd-chat">
+                <p style="max-width: 45%;" class="chatMessage frnd-chat">
                     <span>{{message.text}}</span>
                     <span class="chat__msg-filler2"> </span>
                     <span class="msg-footer">

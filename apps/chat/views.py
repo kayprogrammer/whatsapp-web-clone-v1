@@ -32,6 +32,7 @@ class ShowDirectMessagesView(LoginRequiredMixin, View):
             return JsonResponse({'error': 'User not found'}) 
 
         messages = Message.objects.filter(Q(sender=user) | Q(receiver=user), Q(sender=friend) | Q(receiver=friend)).select_related('sender', 'receiver').order_by('created_at')
+        messages.filter(sender=friend).update(is_read=True)
         response = dict()
         response['success'] = True
         response['html_data'] = render_to_string('chat/dm-page.html', {'messages': messages, 'friend': friend}, request=request)

@@ -60,7 +60,7 @@
             <div class="header">
                 <!-- Profile Picture -->
                 <div class="userImg">
-                    <img src="{{request.user.avatarURL}}" alt="" class="cover">
+                    <img src="{{request.user.avatarURL}}" style="object-position: top; object-fit: cover;" alt="" class="cover">
                 </div>
 
                 <!-- Dropdown -->
@@ -141,7 +141,7 @@
                 <div class="block chat-list" data-phone="{% if i.sender == request.user %}{{i.receiver.phone}}{% else %}{{i.sender.phone}}{% endif %}" onclick="openRightSide(this)">
                     <!-- Img -->
                     <div class="imgBox">
-                        <img src="{% if i.sender == request.user %}{{i.receiver.avatarURL}}{% else %}{{i.sender.avatarURL}}{% endif %}" class="cover">
+                        <img style="object-position: top; object-fit: cover;" src="{% if i.sender == request.user %}{{i.receiver.avatarURL}}{% else %}{{i.sender.avatarURL}}{% endif %}" class="cover">
                     </div>
                     <!-- Text -->
                     <div class="h-text">
