@@ -13,8 +13,6 @@ from . mixins import LogoutRequiredMixin
 from . senders import Util, email_verification_generate_token
 from . forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomUserCreationForm, PhoneVerificationForm
 
-import sweetify
-
 User = get_user_model()
 
 class RegisterView(LogoutRequiredMixin, View):

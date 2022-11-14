@@ -27,7 +27,7 @@
 					</label>
 					<div class="clear"> </div>
 				</div>
-				<input type="submit" value="SIGNUP">
+				<input id="submit-btn" type="submit" value="SIGNUP">
 			</form>
 			<p>Already have an Account? <a href="{% url 'login' %}"> Login Now!</a></p>
 		</div>
@@ -55,6 +55,7 @@
 
 
 		$('.register-form').on('submit', function(e) {
+			$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP ..." disabled style="pointer-events: none; background-color: #cccccc; border: 1px solid #999999; color: #666666;">')
 			$('.register-form p').html('')
 			e.preventDefault();
 			$.ajax({
@@ -74,6 +75,8 @@
 							button: "Ok"
 						}).then(function(){
 							window.location.href = "/"
+							$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP">')
+
 						})
 						
 					} else if (response?.errors){
@@ -92,6 +95,7 @@
 								$(`.${key}-error`).html("Passwords mismatch")
 							}
 						})
+						$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP">')
 					}
 					;
 				}

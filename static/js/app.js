@@ -100,9 +100,23 @@ function closeForm() {
 }
 
 
-function openRightSide() {
-    document.getElementById("rightSide").style.display = "flex";
-    document.getElementById("Intro-Left").style.display = "none";
+function openRightSide(e) {
+    var phone = e.getAttribute('data-phone')
+    $.ajax({
+        url: "/chat/show-direct-messages/",
+        type: "POST",
+        data: JSON.stringify({
+            "phone": phone,
+        }),
+        dataType: "json",
+        success: function(response){
+            if (response.success){
+                document.getElementById("rightSide").style.display = "flex";
+                document.getElementById("Intro-Left").style.display = "none";
+                $('#rightSide').html(response.html_data)
+            }
+        }
+    })
 
 }
 

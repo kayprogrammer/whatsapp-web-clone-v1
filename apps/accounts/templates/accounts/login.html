@@ -14,7 +14,7 @@
 				<p class="error"></p>
 
 				<div class="wthree-text" >
-				<input type="submit" value="LOGIN">
+				<input id="submit-btn" type="submit" value="LOGIN">
 			</form>
 			<p>
 				Don't have an Account? <a href="{% url 'register' %}"> Register Now!</a>
@@ -28,6 +28,8 @@
 {% block js %}
 	<script type="text/javascript">
 		$('.login-form').on('submit', function(e) {
+			$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="LOGIN ..." disabled style="pointer-events: none; background-color: #cccccc; border: 1px solid #999999; color: #666666;">')
+
 			e.preventDefault();
 			$.ajax({
 				url: "{% url 'login' %}",
@@ -43,18 +45,23 @@
 							timer: 1200
 						}).then(function() {
 							window.location.href = "/"
+							$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="LOGIN">')
 						})
+
 					} else if (response?.credentials_error){
+						$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="LOGIN">')
                         Toast.fire({
 							icon: 'error',
 							title: response?.credentials_error
 						})
 					} else if (response?.email_error){
+						$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="LOGIN">')
                         Toast.fire({
 							icon: 'error',
 							title: response?.email_error
 						})
 					} else if (response?.phone_error){
+						$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="LOGIN">')
                         Toast.fire({
 							icon: 'error',
 							title: response?.phone_error

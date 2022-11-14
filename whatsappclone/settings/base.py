@@ -301,9 +301,7 @@ JAZZMIN_SETTINGS = {
         "accounts.user": "fas fa-user-cog",
         "accounts.blockedcontact": "fas fa-ban",
         "accounts.timezone": "fas fa-clock",
-        # "news.articleviews": "fas fa-eye",
-        # "others.about": "fas fa-info-circle",
-        # "others.message": "fas fa-envelope",
+        "chat.message": "fas fa-comments",
     },
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas fa-chevron-circle-right",
