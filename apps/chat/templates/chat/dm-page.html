@@ -1,5 +1,11 @@
 {% load static %}
 {% load custom_tags %}
+<style>
+    .smileys h3{
+        padding: 7px;
+        cursor: pointer;
+    }
+</style>
 <div class="header">
     <div class="imgText" role="button" onclick="openChatAbout()">
         <div class="userImg">
@@ -19,7 +25,7 @@
         </button>
 
         <div class="dropdown-icon">
-            <button class="pressed icons pP" id="dropDown" onclick="myDrop()">
+            <button class="pressed icons pP" id="dropDown">
                 <svg viewBox="0 0 24 24" width="24" height="24" class="">
                     <path fill="currentColor"
                         d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z">
@@ -45,9 +51,7 @@
 
 <!-- ChatBox -->
 <div class="chatBox">
-    <div>
-        
-        
+    <div id="chatmessages-list">
         {% for message in messages %}
             {% ifchanged %}<div class="chat__date-wrapper"><span class="chat__date"> {{message.created_at|dm_sweet_timestamp:request.user.tz.name}}</span></div>{% endifchanged %}
             {% if forloop.counter == 1 %}
@@ -63,7 +67,7 @@
                 </p>
             {% endif %}
             {% if message.sender == request.user %}
-                <p style="max-width: 45%;" class="chatMessage my-chat">
+                <p {% if forloop.last %}id="last-msg"{% endif %} style="max-width: 45%;" class="chatMessage my-chat">
                     <span>{{message.text}} </span>
                     <span class="chat__msg-filler"> </span>
                     <span class="msg-footer">
@@ -85,7 +89,7 @@
                     </button>
                 </p>
             {% else %}
-                <p style="max-width: 45%;" class="chatMessage frnd-chat">
+                <p {% if forloop.last %}id="last-msg"{% endif %} style="max-width: 45%;" class="chatMessage frnd-chat">
                     <span>{{message.text}}</span>
                     <span class="chat__msg-filler2"> </span>
                     <span class="msg-footer">
@@ -116,11 +120,13 @@
     </div>
 </div>
 
-<div class="chat-footer">
+<form method="POST" class="chat-footer">
+    {% csrf_token %}
+    <input type="hidden" value="{{friend.phone}}" id="frnd-phone" />
     <div class="emojis__wrapper" id="emoji-wrap">
         <div class="emojis__tabs">
             <div class="emojis__tab emojis__tab--active">
-                <button aria-label="Recent emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Recent emojis" data-id="recent">
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                         class="emojis__tab-icon">
                         <path
@@ -131,7 +137,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="People emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="People emojis" data-id="faces">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -144,7 +150,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Nature emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Nature emojis" data-id="nature">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -154,7 +160,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Food emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Food emojis" data-id="food">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -167,7 +173,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Activity emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Activity emojis" data-id="activity">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -180,7 +186,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Travel emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Travel emojis" data-id="travel">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -190,7 +196,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Object emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Object emojis" data-id="objects">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -203,7 +209,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Symbol emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Symbol emojis" data-id="symbols">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -216,7 +222,7 @@
                 </button>
             </div>
             <div class="emojis__tab ">
-                <button aria-label="Flag emojis">
+                <button class="emojis_tab_btn" type="button" aria-label="Flag emojis" data-id="flags">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                         class="emojis__tab-icon">
                         <path fill="currentColor"
@@ -228,366 +234,196 @@
         </div>
         <div class="emojis__content">
             <input class="emojis__search" placeholder="Search Emoji">
-            <h4 class="emojis__label"> Smileys &amp; People </h4>
-            <div class="emojis__grid">
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -6px;">
+            {% if recent_emojis %}
+                <h4 class="emojis__label"> Recent </h4>
+                <div class="emojis__grid smileys">
+                    {% for emoji in recent_emojis %}
+                        <h3 class="emoji-text">{{emoji}}</h3>
+                    {% endfor %}
                 </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -266px;">
-                </div>
+            {% endif %}
+            <h4 class="emojis__label"> Smileys </h4>
+            <div class="emojis__grid smileys">
+                <h3 class="emoji-text">😊</h3>
+                <h3 class="emoji-text">😊</h3>
+                <h3 class="emoji-text">😀</h3> 
+                <h3 class="emoji-text">😃</h3>  
+                <h3 class="emoji-text">😄</h3> 
+                <h3 class="emoji-text">😁</h3>
+                <h3 class="emoji-text">😆</h3>  
+                <h3 class="emoji-text">😅</h3>
+                <h3 class="emoji-text">🤣</h3>
+                <h3 class="emoji-text">😂</h3>
+                <h3 class="emoji-text">🙂</h3>
+                <h3 class="emoji-text">🙃</h3>
+                <h3 class="emoji-text">😉</h3> 
+                <h3 class="emoji-text">😊</h3>
+                <h3 class="emoji-text">😇</h3>
+                <h3 class="emoji-text">🥰</h3>
+                <h3 class="emoji-text">😍</h3>
+                <h3 class="emoji-text">🤩</h3>
+                <h3 class="emoji-text">😘</h3>
+                <h3 class="emoji-text">😗</h3> 
+                <h3 class="emoji-text">😚</h3>
+                <h3 class="emoji-text">😙</h3>
+                <h3 class="emoji-text">🥲</h3>
+                <h3 class="emoji-text">😋</h3>
+                <h3 class="emoji-text">😛</h3>
+                <h3 class="emoji-text">😜</h3>
+                <h3 class="emoji-text">🤪</h3> 
+                <h3 class="emoji-text">😝</h3>
+                <h3 class="emoji-text">🤑</h3>
+                <h3 class="emoji-text">🤗</h3>
+                <h3 class="emoji-text">🤭</h3>
+                <h3 class="emoji-text">🤫</h3> 
+                <h3 class="emoji-text">🤔</h3> 
+                <h3 class="emoji-text">🤐</h3>
+                <h3 class="emoji-text">🤨</h3>
+                <h3 class="emoji-text">😐</h3>
+                <h3 class="emoji-text">😑</h3>
+                <h3 class="emoji-text">😶</h3>
+                <h3 class="emoji-text">😶‍🌫️</h3>
+                <h3 class="emoji-text">😏</h3>
+                <h3 class="emoji-text">😒</h3>
+                <h3 class="emoji-text">🙄</h3>
+                <h3 class="emoji-text">😬</h3>
+                <h3 class="emoji-text">😮‍💨</h3>
+                <h3 class="emoji-text">🤥</h3>
+                <h3 class="emoji-text">😌</h3>
+                <h3 class="emoji-text">😔</h3>
+                <h3 class="emoji-text">😪</h3>
+                <h3 class="emoji-text">🤤</h3>
+                <h3 class="emoji-text">😴</h3>
+                <h3 class="emoji-text">😷</h3>
+                <h3 class="emoji-text">🤒</h3>
+                <h3 class="emoji-text">🤕</h3>
+                <h3 class="emoji-text">🤢</h3>
+                <h3 class="emoji-text">🤮</h3>
+                <h3 class="emoji-text">🤧</h3>
+                <h3 class="emoji-text">🥵</h3>
+                <h3 class="emoji-text">🥶</h3>
+                <h3 class="emoji-text">🥴</h3>
+                <h3 class="emoji-text">😵</h3>
+                <h3 class="emoji-text">😵‍💫</h3>
+                <h3 class="emoji-text">🤯</h3>
+                <h3 class="emoji-text">🤠</h3>
+                <h3 class="emoji-text">🥳</h3>
+                <h3 class="emoji-text">🥸</h3>
+                <h3 class="emoji-text">😎</h3>
+                <h3 class="emoji-text">🤓</h3>
+                <h3 class="emoji-text">🧐</h3>
+                <h3 class="emoji-text">😕</h3>
+                <h3 class="emoji-text">😟</h3>
+                <h3 class="emoji-text">🙁</h3>
+                <h3 class="emoji-text">☹️</h3>
+                <h3 class="emoji-text">😮</h3>
+                <h3 class="emoji-text">😯</h3>
+                <h3 class="emoji-text">😲</h3>
+                <h3 class="emoji-text">😳</h3>
+                <h3 class="emoji-text">🥺</h3>
+                <h3 class="emoji-text">😦</h3>
+                <h3 class="emoji-text">😧</h3>
+                <h3 class="emoji-text">😨</h3>
+                <h3 class="emoji-text">😰</h3>
+                <h3 class="emoji-text">😥</h3>
+                <h3 class="emoji-text">😢</h3>
+                <h3 class="emoji-text">😭</h3>
+                <h3 class="emoji-text">😱</h3>
+                <h3 class="emoji-text">😖</h3>
+                <h3 class="emoji-text">😣</h3>
+                <h3 class="emoji-text">😞</h3>
+                <h3 class="emoji-text">😓</h3>
+                <h3 class="emoji-text">😩</h3>
+                <h3 class="emoji-text">😫</h3>
+                <h3 class="emoji-text">🥱</h3>
+                <h3 class="emoji-text">😤</h3>
+                <h3 class="emoji-text">😡</h3>
+                <h3 class="emoji-text">😠</h3>
             </div>
-            <h4 class="emojis__label"> Animals &amp; Nature </h4>
-            <div class="emojis__grid">
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -6px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -58px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -110px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -110px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -162px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -162px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -214px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -214px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -3px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -47.2px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -91.4px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -135.6px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -179.8px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -224px -266px;">
-                </div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -268.2px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -312.4px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -356.6px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -400.8px -266px;"></div>
-                <div role="img" aria-label="emoji" class="emoji emojis__emoji"
-                    style="background-position: -445px -266px;">
-                </div>
+            <h4 class="emojis__label"> Family &amp; People </h4>
+            <div class="emojis__grid smileys">
+                <h3 class="emoji-text">💆</h3> 
+                <h3 class="emoji-text">💆‍♂️</h3> 
+                <h3 class="emoji-text">💆‍♀️</h3> 
+                <h3 class="emoji-text">💇</h3> 
+                <h3 class="emoji-text">💇‍♂️</h3> 
+                <h3 class="emoji-text">💇‍♀️</h3> 
+                <h3 class="emoji-text">🚶</h3> 
+                <h3 class="emoji-text">🚶‍♂️</h3> 
+                <h3 class="emoji-text">🚶‍♀️</h3> 
+                <h3 class="emoji-text">🧍</h3> 
+                <h3 class="emoji-text">🧍‍♂️</h3> 
+                <h3 class="emoji-text">🧍‍♀️</h3> 
+                <h3 class="emoji-text">🧎</h3> 
+                <h3 class="emoji-text">🧎‍♂️</h3> 
+                <h3 class="emoji-text">🧎‍♀️</h3> 
+                <h3 class="emoji-text">🧑‍🦯</h3> 
+                <h3 class="emoji-text">👨‍🦯</h3> 
+                <h3 class="emoji-text">👩‍🦯</h3> 
+                <h3 class="emoji-text">🧑‍🦼</h3> 
+                <h3 class="emoji-text">👨‍🦼</h3> 
+                <h3 class="emoji-text">👩‍🦼</h3> 
+                <h3 class="emoji-text">🧑‍🦽</h3> 
+                <h3 class="emoji-text">👨‍🦽</h3> 
+                <h3 class="emoji-text">👩‍🦽</h3> 
+                <h3 class="emoji-text">🏃</h3> 
+                <h3 class="emoji-text">🏃‍♂️</h3> 
+                <h3 class="emoji-text">🏃‍♀️</h3> 
+                <h3 class="emoji-text">💃</h3> 
+                <h3 class="emoji-text">🕺</h3> 
+                <h3 class="emoji-text">🕴️</h3> 
+                <h3 class="emoji-text">👯</h3> 
+                <h3 class="emoji-text">👯‍♂️</h3> 
+                <h3 class="emoji-text">👯‍♀️</h3> 
+                <h3 class="emoji-text">🧖</h3> 
+                <h3 class="emoji-text">🧖‍♂️</h3> 
+                <h3 class="emoji-text">🧖‍♀️</h3> 
+                <h3 class="emoji-text">🧘</h3> 
+                <h3 class="emoji-text">🧑‍🤝‍🧑</h3> 
+                <h3 class="emoji-text">👭</h3> 
+                <h3 class="emoji-text">👫</h3>
+                <h3 class="emoji-text">👬</h3> 
+                <h3 class="emoji-text">💏</h3>
+                <h3 class="emoji-text">👩‍❤️‍💋‍👨</h3>
+                <h3 class="emoji-text">👨‍❤️‍💋‍👨</h3>
+                <h3 class="emoji-text">👩‍❤️‍💋‍👩</h3>
+                <h3 class="emoji-text">💑</h3>
+                <h3 class="emoji-text">👩‍❤️‍👨</h3>
+                <h3 class="emoji-text">👨‍❤️‍👨</h3>
+                <h3 class="emoji-text">👩‍❤️‍👩</h3>
+                <h3 class="emoji-text">👪</h3>
+                <h3 class="emoji-text">👨‍👩‍👦</h3>
+                <h3 class="emoji-text">👨‍👩‍👧</h3>
+                <h3 class="emoji-text">👨‍👩‍👧‍👦</h3>
+                <h3 class="emoji-text">👨‍👩‍👦‍👦</h3>
+                <h3 class="emoji-text">👨‍👩‍👧‍👧</h3>
+                <h3 class="emoji-text">👨‍👨‍👦</h3>
+                <h3 class="emoji-text">👨‍👨‍👧</h3>
+                <h3 class="emoji-text">👨‍👨‍👧‍👦</h3>
+                <h3 class="emoji-text">👨‍👨‍👦‍👦</h3>
+                <h3 class="emoji-text">👨‍👨‍👧‍👧</h3>
+                <h3 class="emoji-text">👩‍👩‍👦</h3>
+                <h3 class="emoji-text">👩‍👩‍👧</h3>
+                <h3 class="emoji-text">👩‍👩‍👧‍👦</h3>
+                <h3 class="emoji-text">👩‍👩‍👦‍👦</h3>
+                <h3 class="emoji-text">👩‍👩‍👧‍👧</h3>
+                <h3 class="emoji-text">👨‍👦</h3>
+                <h3 class="emoji-text">👨‍👦‍👦</h3>
+                <h3 class="emoji-text">👨‍👧</h3>
+                <h3 class="emoji-text">👨‍👧‍👦</h3>
+                <h3 class="emoji-text">👨‍👧‍👧</h3>
+                <h3 class="emoji-text">👩‍👦</h3>
+                <h3 class="emoji-text">👩‍👦‍👦</h3>
+                <h3 class="emoji-text">👩‍👧</h3>
+                <h3 class="emoji-text">👩‍👧‍👦</h3>
+                <h3 class="emoji-text">👩‍👧‍👧</h3>
             </div>
         </div>
     </div>
 
     <div class="chat-input-wrapper">
 
-        <button aria-label="Close emojis" class="icons hidden" id="emoji-remove-icon">
+        <button type="button" aria-label="Close emojis" class="icons hidden" id="emoji-remove-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                 class="chat__input-icon">
                 <path fill="currentColor"
@@ -596,7 +432,7 @@
             </svg>
         </button>
 
-        <buttton role="button" class="icons" id="emoji-icon">
+        <buttton type="button" role="button" class="icons" id="emoji-icon">
             <span class="">
                 <svg viewBox="0 0 24 24" width="24" height="24" class="">
                     <path fill="currentColor"
@@ -606,7 +442,7 @@
             </span>
         </buttton>
 
-        <button aria-label="Choose GIF" class="icons hidden">
+        <button type="button" aria-label="Choose GIF" class="icons hidden">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                 class="chat__input-icon">
                 <path fill="currentColor"
@@ -615,7 +451,7 @@
             </svg>
         </button>
 
-        <button aria-label="Choose sticker" class="icons hidden">
+        <button type="button" aria-label="Choose sticker" class="icons hidden">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                 class="chat__input-icon">
                 <path fill="currentColor"
@@ -625,7 +461,7 @@
         </button>
 
         <div class="chat-attach">
-            <buttton role="button" class="icons Marg" id="chat-popup">
+            <buttton type="button" role="button" class="icons Marg" id="chat-popup">
                 <span class="">
                     <svg viewBox="0 0 24 24" width="24" height="24" class="">
                         <path fill="currentColor"
@@ -636,7 +472,7 @@
             </buttton>
 
             <div class="popup" id="popup">
-                <button aria-label="Contact" title="Contact" class="popopIcons" role="button">
+                <button type="button" aria-label="Contact" title="Contact" class="popopIcons" role="button">
                     <span class="">
                         <svg viewBox="0 0 53 53" width="53" height="53" class="">
                             <defs>
@@ -662,7 +498,7 @@
                     </span>
                 </button>
 
-                <button aria-label="Document" title="Document" class="popopIcons" role="button">
+                <button type="button" aria-label="Document" title="Document" class="popopIcons" role="button">
                     <span class="">
                         <svg viewBox="0 0 53 53" width="53" height="53" class="">
                             <defs>
@@ -690,7 +526,7 @@
                     <input accept="*" type="file" multiple="" style="display: none;">
                 </button>
 
-                <button aria-label="Camera" title="Camera" class="popopIcons" role="button">
+                <button type="button" aria-label="Camera" title="Camera" class="popopIcons" role="button">
                     <span class="">
                         <svg viewBox="0 0 53 53" width="53" height="53" class="">
                             <defs>
@@ -717,7 +553,7 @@
                     </span>
                 </button>
 
-                <button aria-label="Sticker" title="Sticker" class="popopIcons" role="button">
+                <button type="button" aria-label="Sticker" title="Sticker" class="popopIcons" role="button">
                     <span class="">
                         <svg width="53" height="53" viewBox="0 0 53 53" fill="none" class="">
                             <g clip-path="url(#clip0_850:74884)">
@@ -741,7 +577,7 @@
                     <input accept="image/*" type="file" style="display: none;">
                 </button>
 
-                <button aria-label="Photos &amp; Videos" title="Photos &amp; Videos" class="popopIcons"
+                <button type="button" aria-label="Photos &amp; Videos" title="Photos &amp; Videos" class="popopIcons"
                     role="button">
                     <span class="">
                         <svg viewBox="0 0 53 53" width="53" height="53" class="">
@@ -774,8 +610,8 @@
         </div>
 
         <input type="text" placeholder="Type a message" class="send-message">
-
-        <button role="button" class="icons">
+        <button></button>
+        <button type="button" role="button" class="icons">
             <span class="">
                 <svg viewBox="0 0 24 24" width="24" height="24" class="">
                     <path fill="currentColor"
@@ -785,4 +621,253 @@
             </span>
         </button>
     </div>
-</div>
+</form>
+
+<script type="text/javascript">    
+    $('.chat-footer').on('submit', function(e){
+        e.preventDefault();
+        $("#emoji-wrap").removeClass("emojis__wrapper--active");
+        $(".hidden").hide();
+        var phone = $('#frnd-phone').val()
+        var message = $(".send-message")
+        console.log(/\p{Emoji}/u.test(message.val()))
+        $.ajax({
+            url: "/chat/send-message/",
+            method: "POST",
+            data: JSON.stringify({
+                "phone": phone,
+                "message": message.val()
+            }),
+            dataType: "json",
+            success: function(response) {
+                if (response?.success){
+                    message.val('')
+                    $('#chatmessages-list').append(`
+                        <p id="last-msg" style="max-width: 45%;" class="chatMessage my-chat">
+                            <span>${response?.message}</span>
+                            <span class="chat__msg-filler"> </span>
+                            <span class="msg-footer">
+                                <span>${response?.time}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" width="16" height="15"
+                                    aria-label="read" class="chat-icon--blue">
+                                    <path fill="currentColor"
+                                        d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z">
+                                    </path>
+                                </svg>
+                            </span>
+                            <button aria-label="Message options" class="chat__msg-options"><svg
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 20" width="19" height="20"
+                                    class="chat__msg-options-icon">
+                                    <path fill="currentColor"
+                                        d="M3.8 6.7l5.7 5.7 5.7-5.7 1.6 1.6-7.3 7.2-7.3-7.2 1.6-1.6z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </p>
+                    `)
+                    document.getElementById('last-msg').scrollIntoView()
+                }
+            }
+        })
+    })
+
+    const emojis = {
+        "faces": [
+            "😊", "😊", "😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "😉",
+            "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "😚", "😙", "🥲", "😋", "😛", "😜", 
+            "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔", "🤐", "🤨", "😐", "😑", "😶", "😶‍🌫️", 
+            "😏", "😒", "🙄", "😬", "😮‍💨", "🤥", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", 
+            "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "😵‍💫", "🤯", "🤠", "🥳", "🥸", 
+            "😎", "🤓", "🧐", "😕", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "😦", 
+            "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", 
+            "🥱", "😤", "😡", "😠", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾",
+            "🤖", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "💋", "👋", "🤚", 
+            "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", 
+            "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", 
+            "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", 
+            "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁️", "👅", "👄", "👶", "🧒", "👦", 
+            "👧", "🧑", "👱", "👨", "🧔", "👨‍🦰", "👨‍🦱", "👨‍🦳", "👨‍🦲", "👩", "👩‍🦰", "🧑‍🦰", "👩‍🦱", 
+            "🧑‍🦱", "👩‍🦳", "🧑‍🦳", "👩‍🦲", "🧑‍🦲", "👱‍♀️", "👱‍♂️", "🧓", "👴", "👵", "🙍", "🙍‍♂️", "🙍‍♀️", 
+            "🙎", "🙎‍♂️", "🙎‍♀️", "🙅", "🙅‍♂️", "🙅‍♀️", "🙆", "🙆‍♂️", "🙆‍♀️", "💁", "💁‍♂️", "💁‍♀️", "🙋", 
+            "🙋‍♂️", "🙋‍♀️", "🧏", "🧏‍♂️", "🧏‍♀️", "🙇", "🙇‍♂️", "🙇‍♀️", "🤦", "🤦‍♂️", "🤦‍♀️", "🤷", "🤷‍♂️", 
+            "🤷‍♀️", "🧑‍⚕️", "👨‍⚕️", "👩‍⚕️", "🧑‍🎓", "👨‍🎓", "👩‍🎓", "🧑‍🏫", "👨‍🏫", "👩‍🏫", "🧑‍⚖️", "👨‍⚖️", "👩‍⚖️", 
+            "🧑‍🌾", "👨‍🌾", "👩‍🌾", "🧑‍🍳", "👨‍🍳", "👩‍🍳", "🧑‍🔧", "👨‍🔧", "👩‍🔧", "🧑‍🏭", "👨‍🏭",  "👩‍🏭", "🧑‍💼", 
+            "👨‍💼", "👩‍💼", "🧑‍🔬", "👨‍🔬", "👩‍🔬", "🧑‍💻", "👨‍💻", "👩‍💻", "🧑‍🎤", "👨‍🎤", "👩‍🎤", "🧑‍🎨", "👨‍🎨", 
+            "👩‍🎨", "🧑‍✈️", "👨‍✈️", "👩‍✈️", "🧑‍🚀", "👨", "👩", "🧑", "👨", "👩‍🚒", "👮", "👮‍♂️", "👮‍♀️", 
+            "🕵️", "🕵️‍♂️", "🕵️‍♀️", "💂", "🥷", "👷", "👷‍♂️", "👷‍♀️", "🤴", "👸", "👳", "👲", "🧕", 
+            "🤵", "🤵‍♂️", "🤵‍♀️", "👰", "👰‍♂️", "👰‍♀️", "🤰", "🤱", "👩‍🍼", "👨‍🍼", "🧑‍🍼", "👼", "🎅", 
+            "🤶", "🧑‍🎄", "🦸", "🦸‍♂️", "🦸‍♀️", "🦹", "🦹‍♂️", "🦹‍♀️", "🧙", "🧙‍♂️", "🧙‍♀️", "🧚", "🧚‍♂️", 
+            "🧚‍♀️", "🧛", "🧛‍♂️", "🧛‍♀️", "🧜", "🧜‍♂️", "🧜‍♀️", "🧝", "🧝‍♂️", "🧝‍♀️", "🧞", "🧞‍♂️", "🧞‍♀️", 
+            "🧟", "🧟‍♂️", "🧟‍♀️", "💆", "💆‍♂️", "💆‍♀️", "💇", "💇‍♂️", "💇‍♀️", "🚶", "🚶‍♂️", "🚶‍♀️", "🧍", 
+            "🧍‍♂️", "🧍‍♀️", "🧎", "🧎‍♂️", "🧎‍♀️", "🧑‍🦯", "👨‍🦯", "👩‍🦯", "🧑‍🦼", "👨‍🦼", "👩‍🦼", "🧑‍🦽", "👨‍🦽", 
+            "👩‍🦽", "🏃", "🏃‍♂️","🏃‍♀️", "💃", "🕺", "🕴️", "👯", "👯‍♂️", "👯‍♀️", "🧖", "🧖‍♂️", "🧖‍♀️", 
+            "🧘", "🧑‍🤝‍🧑", "👭", "👫", "👬", "💏", "👩‍❤️‍💋‍👨", "👨‍❤️‍💋‍👨", "👩‍❤️‍💋‍👩", "💑", "👩‍❤️‍👨", "👨‍❤️‍👨", "👩‍❤️‍👩", 
+            "👪", "👨‍👩‍👦", "👨‍👩‍👧", "👨‍👩‍👧‍👦", "👨‍👩‍👦‍👦", "👨‍👩‍👧‍👧", "👨‍👨‍👦", "👨‍👨‍👧", "👨‍👨‍👧‍👦", "👨‍👨‍👦‍👦", "👨‍👨‍👧‍👧", "👩‍👩‍👦", "👩‍👩‍👧", 
+            "👩‍👩‍👧‍👦", "👩‍👩‍👦‍👦", "👩‍👩‍👧‍👧", "👨‍👦", "👨‍👦‍👦", "👨‍👧", "👨‍👧‍👦", "👨‍👧‍👧", "👩‍👦", "👩‍👦‍👦", "👩‍👧", "👩‍👧‍👦", "👩‍👧‍👧",
+
+        ],
+
+        "nature": [
+            "🙈", "🙉", "🙊", "💥", "💫", "💦", "💨", "🐵", "🐒", "🦍", "🦧", "🐶","🐕", "🦮", 
+            "🐕‍🦺", "🐩", "🐺", "🦊", "🦝", "🐱", "🐈", "🐈‍⬛", "🦁", "🐯", "🐅", "🐆",
+            "🐴", "🐎", "🦄", "🦓", "🦌", "🦬", "🐮", "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", 
+            "🐏", "🐑", "🐐", "🐪", "🐫", "🦙", "🦒", "🐘", "🦣", "🦏", "🦛", "🐭", "🐁", "🐀", 
+            "🐹", "🐰", "🐇", "🐿️", "🦫", "🦔", "🦇", "🐻", "🐻‍❄️", "🐨", "🐼", "🦥", "🦦", "🦨", 
+            "🦘", "🦡", "🐾", "🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🐧", "🕊️", "🦅", "🦆", 
+            "🦢", "🦉", "🦤", "🪶", "🦩", "🦚", "🦜", "🐸", "🐊", "🐢", "🦎", "🐍", "🐲", "🐉", 
+            "🦕", "🦖", "🐳", "🐋", "🐬", "🦭", "🐟", "🐠", "🐡", "🦈", "🐙", "🐚", "🐌", "🦋", 
+            "🐛", "🐜", "🐝", "🪲", "🐞", "🦗", "🪳", "🕷️", "🕸️", "🦂", "🦟", "🪰", "🪱", "🦠", 
+            "💐", "🌸", "💮", "🏵️", "🌹", "🥀", "🌺", "🌻", "🌼", "🌷", "🌱", "🪴", "🌲", "🌳", 
+            "🌴", "🌵", "🌾", "🌿", "☘️", "🍀", "🍁", "🍂", "🍃", "🍄", "🌰", "🦀", "🦞", "🦐", 
+            "🦑", "🌍", "🌎", "🌏", "🌐", "🪨", "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", 
+            "🌙", "🌚", "🌛", "🌜", "☀️", "🌝", "🌞", "⭐", "🌟", "🌠", "☁️", "⛅", "⛈️", "🌤️", 
+            "🌥️", "🌦️", "🌧️", "🌨️", "🌩️", "🌪️", "🌫️", "🌬️", "🌈", "☂️", "☔", "⚡", "❄️", "☃️", 
+            "⛄", "☄️", "🔥", "💧", "🌊", "🎄", "✨", "🎋", "🎍", 
+        ],
+
+        "food": [
+            "🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓",
+            "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", 
+            "🥦", "🧄", "🧅", "🍄", "🥜", "🌰", "🍞", "🥐", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", 
+            "🧀", "🍖", "🍗", "🥩", "🥓", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯", "🫔", "🥙", 
+            "🧆", "🥚", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧈", "🧂", "🥫", "🍱", "🍘", 
+            "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🥮", "🍡", "🥟", "🥠", 
+            "🥡", "🦪", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", 
+            "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", 
+            "🥂", "🥃", "🥤", "🧋", "🧃", "🧉", "🧊", "🥢", "🍽️", "🍴", "🥄", 
+        ],
+
+        "activity": [
+            "🕴️", "🧗", "🧗‍♂️", "🧗‍♀️", "🤺", "🏇", "⛷️", "🏂", "🏌️", "🏌️‍♂️", "🏌️‍♀️", "🏄", "🏄‍♂️", "🏄‍♀️", 
+            "🚣", "🚣‍♂️", "🚣‍♀️", "🏊", "🏊‍♂️", "🏊‍♀️", "⛹️", "⛹️‍♂️", "⛹️‍♀️", "🏋️", "🏋️‍♂️", "🏋️‍♀️", "🚴", "🚴‍♂️", 
+            "🚴‍♀️", "🚵", "🚵‍♂️", "🚵‍♀️", "🤸", "🤸‍♂️", "🤸‍♀️", "🤼", "🤼‍♂️", "🤼‍♀️", "🤽", "🤽‍♂️", "🤽‍♀️", "🤾", 
+            "🤾‍♂️", "🤾‍♀️", "🤹", "🤹‍♂️", "🤹‍♀️", "🧘", "🧘‍♂️", "🧘‍♀️", "🎪", "🛹", "🛼", "🛶", "🎗️", "🎟️", 
+            "🎫", "🎖️", "🏆", "🏅", "🥇", "🥈", "🥉", "⚽", "⚾", "🥎", "🏀", "🏐", "🏈", "🏉", 
+            "🎾", "🥏", "🎳", "🏏", "🏑", "🏒", "🥍", "🏓", "🏸", "🥊", "🥋", "🥅", "⛳", "⛸️", 
+            "🎣", "🎽", "🎿", "🛷", "🥌", "🎯", "🎱", "🎮", "🎰", "🎲", "🧩", "♟️", "🎭", "🎨", 
+            "🧵", "🧶", "🎼", "🎤", "🎧", "🎷", "🪗", "🎸", "🎹", "🎺", "🎻", "🥁", "🪘", "🎬", 
+            "🏹"
+        ],
+
+        "travel": [
+            "🚣", "🗾", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", 
+            "🛖", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", 
+            "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", 
+            "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "🎠", "🎡", "🎢", "🚂", "🚃", 
+            "🚄", "🚅", "🚆", "🚇", "🚈", "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", 
+            "🚑", "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘",  "🚙", "🛻",  "🚚",  "🚛",  "🚜", 
+            "🏎️", "🏍️", "🛵", "🛺", "🚲", "🛴", "🚏", "🛣️", "🛤️", "⛽", "🚨", "🚥", "🚦", "🚧", 
+            "⚓", "⛵", "🚤", "🛳️", "⛴️", "🛥️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚁", 
+            "🚟", "🚠", "🚡", "🛰️", "🚀", "🛸", "🪐", "🌠", "🌌", "⛱️", "🎆", "🎇", "🎑", "💴", 
+            "💵", "💶", "💷", "🗿", "🛂", "🛃", "🛄", "🛅" 
+        ],
+
+        "objects": [
+            "💌", "🕳️", "💣", "🛀", "🛌", "🔪", "🏺", "🗺️", "🧭", "🧱", "💈", "🦽", "🦼", "🛢️", 
+            "🛎️", "🧳", "⌛", "⏳", "⌚", "⏰", "⏱️", "⏲️", "🕰️", "🌡️", "⛱️", "🧨", "🎈", "🎉", 
+            "🎊", "🎎", "🎏", "🎐", "🧧", "🎀", "🎁", "🤿", "🪀", "🪁", "🔮", "🪄", "🧿", "🕹️", 
+            "🧸", "🪅", "🪆", "🖼️", "🧵", "🪡", "🧶", "🪢", "🛍️", "📿", "💎", "📯", "🎙️", "🎚️", 
+            "🎛️", "📻", "🪕", "📱", "📲", "☎️", "📞", "📟", "📠", "🔋", "🔌", "💻", "🖥️", "🖨️", 
+            "⌨️", "🖱️", "🖲️", "💽", "💾", "💿", "📀", "🧮", "🎥", "🎞️", "📽️", "📺", "📷", "📸", 
+            "📹", "📼", "🔍", "🔎", "🕯️", "💡", "🔦", "🏮", "🪔", "📔", "📕", "📖", "📗", "📘", 
+            "📙", "📚", "📓", "📒", "📃", "📜", "📄", "📰", "🗞️", "📑", "🔖", "🏷️", "💰", "🪙", 
+            "💴", "💵", "💶", "💷", "💸", "💳", "🧾", "✉️", "📧", "📨", "📩", "📤", "📥", "📦", 
+            "📫", "📪", "📬", "📭", "📮", "🗳️", "✏️", "✒️", "🖋️", "🖊️", "🖌️", "🖍️", "📝", "📁", 
+            "📂", "🗂️", "📅", "📆", "🗒️", "🗓️", "📇", "📈", "📉", "📊", "📋", "📌", "📍", "📎", 
+            "🖇️", "📏", "📐", "✂️", "🗃️", "🗄️", "🗑️", "🔒", "🔓", "🔏", "🔐", "🔑", "🗝️", "🔨", 
+            "🪓", "⛏️", "⚒️", "🛠️", "🗡️", "⚔️", "🔫", "🪃", "🛡️", "🪚", "🔧", "🪛", "🔩", "⚙️", 
+            "🗜️", "⚖️", "🦯", "🔗", "⛓️", "🪝", "🧰", "🧲", "🪜", "⚗️", "🧪", "🧫", "🧬", "🔬", 
+            "🔭", "📡", "💉", "🩸", "💊", "🩹", "🩺", "🚪", "🪞", "🪟", "🛏️", "🛋️", "🪑", "🚽", 
+            "🪠", "🚿", "🛁", "🪤", "🪒", "🧴", "🧷", "🧹", "🧺", "🧻", "🪣", "🧼", "🪥", "🧽", 
+            "🧯", "🛒", "🚬", "⚰️", "🪦", "⚱️", "🗿", "🪧", "🚰"
+        ],
+
+        "symbols": [
+            "💘", "💝", "💖", "💗", "💓", "💞", "💕", "💟", "❣️", "💔", "❤️‍🔥", "❤️‍🩹", "❤️", "🧡", 
+            "💛", "💚", "💙", "💜", "🤎", "🖤", "🤍", "💯", "💢", "💬", "👁️‍🗨️", "🗨️", "🗯️", "💭", 
+            "💤", "💮", "♨️", "💈", "🛑", "🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", 
+            "🕟", "🕔", "🕠", "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", 
+            "🕦", "🌀", "♠️", "♥️", "♦️", "♣️", "🃏", "🀄", "🎴", "🔇", "🔈", "🔉", "🔊", "📢", "📣", 
+            "📯", "🔔", "🔕", "🎵", "🎶", "💹", "🛗", "🏧", "🚮", "🚰", "♿", "🚹", "🚺", "🚻", 
+            "🚼", "🚾", "⚠️", "🚸", "⛔", "🚫", "🚳", "🚭", "🚯", "🚱", "🚷", "📵", "🔞", "☢️", 
+            "☣️", "⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️", "↕️", "↔️", "↩️", "↪️", "⤴️", "⤵️", 
+            "🔃", "🔄", "🔙", "🔚", "🔛", "🔜", "🔝", "🛐", "⚛️", "🕉️", "✡️", "☸️", "☯️", "✝️", 
+            "☦️", "☪️", "☮️", "🕎", "🔯", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", 
+            "♑", "♒", "♓", "⛎", "🔀", "🔁", "🔂", "▶️", "⏩", "⏭️", "⏯️", "◀️", "⏪", "⏮️", 
+            "🔼", "⏫", "🔽", "⏬", "⏸️", "⏹️", "⏺️", "⏏️", "🎦", "🔅", "🔆", "📶", "📳", "📴", 
+            "♀️", "♂️", "✖️", "➕", "➖", "➗", "♾️", "‼️", "⁉️", "❓", "❔", "❕", "❗", "〰️", "💱", 
+            "💲", "⚕️", "♻️", "⚜️", "🔱", "📛", "🔰", "⭕", "✅", "☑️", "✔️", "❌", "❎", "➰", 
+            "➿", "〽️", "✳️", "✴️", "❇️", "©️", "®️", "™️", "#️⃣", "*️⃣", "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", 
+            "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟", "🔠", "🔡", "🔢", "🔣", "🔤", "🅰️", "🆎", "🅱️", 
+            "🆑", "🆒", "🆓", "ℹ️", "🆔", "Ⓜ️", "🆕", "🆖", "🅾️", "🆗", "🅿️", "🆘", "🆙", "🆚", "🈁", 
+            "🈂️", "🈷️", "🈶", "🈯", "🉐", "🈹", "🈚", "🈲", "🉑", "🈸", "🈴", "🈳", "㊗️", "㊙️", 
+            "🈺", "🈵", "🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "🟤", "⚫", "⚪", "🟥", "🟧", "🟨", "🟩", 
+            "🟦", "🟪", "🟫", "⬛", "⬜", "◼️", "◻️", "◾", "◽", "▪️", "🔶", "🔷", "🔸", "🔹", "🔺", 
+            "🔻", "💠", "🔘", "🔳", "🔲"
+        ],
+
+        "flags": [
+            "🏁", "🚩", "🎌", "🏴", "🏳️", "🏳️‍🌈", "🏳️‍⚧️", "🏴‍☠️", "🇦🇨", "🇦🇩", "🇦🇪", "🇦🇫", "🇦🇬", "🇦🇮", "🇦🇱", 
+            "🇦🇲", "🇦🇴", "🇦🇶", "🇦🇷", "🇦🇸", "🇦🇹", "🇦🇺", "🇦🇼", "🇦🇽", "🇦🇿", "🇧🇦", "🇧🇧", "🇧🇩", "🇧🇪", "🇧🇫",
+            "🇧🇬", "🇧🇭", "🇧🇮", "🇧🇯", "🇧🇱", "🇧🇲", "🇧🇳", "🇧🇴", "🇧🇶", "🇧🇷", "🇧🇸", "🇧🇹", "🇧🇻", "🇧🇼", "🇧🇾",
+            "🇧🇿", "🇨🇦", "🇨🇨", "🇨🇩", "🇨🇫", "🇨🇬", "🇨🇭", "🇨🇮", "🇨🇰", "🇨🇱", "🇨🇲", "🇨🇳", "🇨🇴", "🇨🇵", "🇨🇷",
+            "🇨🇺", "🇨🇻", "🇨🇼", "🇨🇽", "🇨🇾", "🇨🇿", "🇩🇪", "🇩🇬", "🇩🇯", "🇩🇰", "🇩🇲", "🇩🇴", "🇩🇿", "🇪🇦", "🇪🇨", 
+            "🇪🇪", "🇪🇬", "🇪🇭", "🇪🇷", "🇪🇸", "🇪🇹", "🇪🇺", "🇫🇮", "🇫🇯", "🇫🇰", "🇫🇲", "🇫🇴", "🇫🇷", "🇬🇦", "🇬🇧", 
+            "🇬🇩", "🇬🇪", "🇬🇫", "🇬🇬", "🇬🇭", "🇬🇮", "🇬🇱", "🇬🇲", "🇬🇳", "🇬🇵", "🇬🇶", "🇬🇷", "🇬🇸", "🇬🇹", "🇬🇺", 
+            "🇬🇼", "🇬🇾", "🇭🇰", "🇭🇲", "🇭🇳", "🇭🇷", "🇭🇹", "🇭🇺", "🇮🇨", "🇮🇩", "🇮🇪", "🇮🇱", "🇮🇲", "🇮🇳", "🇮🇴", 
+            "🇮🇶", "🇮🇷", "🇮🇸", "🇮🇹", "🇯🇪", "🇯🇲", "🇯🇴", "🇯🇵", "🇰🇪", "🇰🇬", "🇰🇭", "🇰🇮", "🇰🇲", "🇰🇳", "🇰🇵", 
+            "🇰🇷", "🇰🇼", "🇰🇾", "🇰🇿", "🇱🇦", "🇱🇧", "🇱🇨", "🇱🇮", "🇱🇰", "🇱🇷", "🇱🇸", "🇱🇹", "🇱🇺", "🇱🇻", "🇱🇾", 
+            "🇲🇦", "🇲🇨", "🇲🇩", "🇲🇪", "🇲🇫", "🇲🇬", "🇲🇭", "🇲🇰", "🇲🇱", "🇲🇲", "🇲🇳", "🇲🇴", "🇲🇵", "🇲🇶", "🇲🇷", 
+            "🇲🇸", "🇲🇹", "🇲🇺", "🇲🇻", "🇲🇼", "🇲🇽", "🇲🇾", "🇲🇿", "🇳🇦", "🇳🇨", "🇳🇪", "🇳🇫", "🇳🇬", "🇳🇮", "🇳🇱", 
+            "🇳🇴", "🇳🇵", "🇳🇷", "🇳🇺", "🇳🇿", "🇴🇲", "🇵🇦", "🇵🇪", "🇵🇫", "🇵🇬", "🇵🇭", "🇵🇰", "🇵🇱", "🇵🇲", "🇵🇳", 
+            "🇵🇷", "🇵🇸", "🇵🇹", "🇵🇼", "🇵🇾", "🇶🇦", "🇷🇪", "🇷🇴", "🇷🇸", "🇷🇺", "🇷🇼", "🇸🇦", "🇸🇧", "🇸🇨", "🇸🇩", 
+            "🇸🇪", "🇸🇬", "🇸🇭", "🇸🇮", "🇸🇯", "🇸🇰", "🇸🇱", "🇸🇲", "🇸🇳", "🇸🇴", "🇸🇷", "🇸🇸", "🇸🇹", "🇸🇻", "🇸🇽", 
+            "🇸🇾", "🇸🇿", "🇹🇦", "🇹🇨", "🇹🇩", "🇹🇫", "🇹🇬", "🇹🇭", "🇹🇯", "🇹🇰", "🇹🇱", "🇹🇲", "🇹🇳", "🇹🇴", "🇹🇷", 
+            "🇹🇹", "🇹🇻", "🇹🇼", "🇹🇿", "🇺🇦", "🇺🇬", "🇺🇲", "🇺🇳", "🇺🇸", "🇺🇾", "🇺🇿", "🇻🇦", "🇻🇨", "🇻🇪", "🇻🇬", 
+            "🇻🇮", "🇻🇳", "🇻🇺", "🇼🇫", "🇼🇸", "🇽🇰", "🇾🇪", "🇾🇹", "🇿🇦", "🇿🇲", "🇿🇼", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🏴󠁵󠁳󠁴󠁸󠁿", 
+            "🏳‍🟧‍⬛‍🟧"
+        ]
+
+    }
+
+    $('.emojis_tab_btn').on('click', function() {
+        $('.emojis__tab--active').removeClass('emojis__tab--active')
+        $(this).parent().toggleClass('emojis__tab--active')
+        var id = $(this).data('id')
+        var sliced_faces = emojis['faces'].slice(0, 65)
+        var sliced_people = emojis['faces'].slice(335, 400) 
+        if (id == 'recent'){
+            $('.emojis__content').html(
+                `
+                    <input class="emojis__search" placeholder="Search Emoji">
+                    <h4 class="emojis__label"> Smileys </h4>
+                    <div class="emojis__grid smileys">
+                        ${sliced_faces?.map((emoji) => (`<h3 class="emoji-text">${emoji}</h3>`))}
+                    </div>
+                    <h4 class="emojis__label"> Family &amp; People </h4>
+                    <div class="emojis__grid smileys">
+                        ${sliced_people?.map((emoji) => (`<h3 class="emoji-text">${emoji}</h3>`))}
+                    </div>
+                `
+            )    
+        }else{
+            $('.emojis__content').html(
+                `
+                    <input class="emojis__search" placeholder="Search Emoji">
+                    <div class="emojis__grid smileys">
+                        ${emojis[id]?.map((emoji) => (`<h3 class="emoji-text">${emoji}</h3>`))}
+                    </div>
+
+                `
+            )
+        }
+    })
+
+    $(document).on('click', '.emoji-text', function() {
+        var emoji = $(this).text()
+        var input_val = $('.send-message')
+        input_val.val(`${input_val.val()}${emoji}`)
+        input_val.focus()
+    })
+    
+</script>

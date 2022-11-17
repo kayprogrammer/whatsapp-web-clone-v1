@@ -3115,7 +3115,7 @@
             headers: {"X-CSRFToken": '{{csrf_token}}'}
         })
     </script>
-    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/app.js' %}?{% now 'U' %}"></script>
     
 </body>
 

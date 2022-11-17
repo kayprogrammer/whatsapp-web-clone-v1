@@ -1,9 +1,7 @@
 // Dropdown Right Side
-$(document).ready(function () {
-    $("#dropDown").click(function (event) {
-        $(".drop").toggle(400);
-        event.stopPropagation();
-    });
+$(document).on('click', "#dropDown", function (event) {
+    $(".drop").toggle(400);
+    event.stopPropagation();
 });
 
 $(".drop").click(function (event) {
@@ -16,15 +14,13 @@ $(document).click(function () {
 
 
 // Popup Conversation
-$(document).ready(function () {
-    $("#chat-popup").click(function (event) {
-        $(".popup").toggle(700);
-        event.stopPropagation();
-    });
+$(document).on('click', "#chat-popup", function (e) {
+    $(".popup").toggle(700);
+    e.stopPropagation();
 });
 
-$(".popup").click(function (event) {
-    event.stopPropagation();
+$(document).on('click', ".popup", function(e) {
+    e.stopPropagation();
 });
 
 $(document).click(function () {
@@ -50,15 +46,15 @@ $(document).click(function () {
 
 
 // Emoji 
-$(document).ready(function () {
-    $("#emoji-icon").click(function () {
-        $("#emoji-wrap").addClass("emojis__wrapper--active");
-        $(".hidden").show();
-    });
-    $("#emoji-remove-icon").click(function () {
-        $("#emoji-wrap").removeClass("emojis__wrapper--active");
-        $(".hidden").hide();
-    });
+$(document).on('click', "#emoji-icon", function () {
+    $("#emoji-wrap").addClass("emojis__wrapper--active");
+    $(".hidden").show();
+    $('.send-message').focus()
+});
+$(document).on('click', "#emoji-remove-icon", function () {
+    $("#emoji-wrap").removeClass("emojis__wrapper--active");
+    $(".hidden").hide();
+    $('.send-message').focus()
 });
 
 
@@ -103,6 +99,7 @@ function closeForm() {
 function openRightSide(e) {
     var phone = $(e).data('phone')
     var unread_count_element = $(e).children('.h-text').children('.message-chat').children().children('div').children('span')
+     
     $.ajax({
         url: "/chat/show-direct-messages/",
         type: "POST",
@@ -116,6 +113,9 @@ function openRightSide(e) {
                 document.getElementById("Intro-Left").style.display = "none";
                 $('#rightSide').html(response.html_data)
                 unread_count_element.fadeOut(100)
+                var chat = document.getElementById('last-msg')
+                chat.scrollIntoView()
+
             }
         }
     })
