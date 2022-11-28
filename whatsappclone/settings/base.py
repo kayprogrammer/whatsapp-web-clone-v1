@@ -76,7 +76,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'apps.common.middlewares.TimezoneMiddleware',
-    'apps.chat.middlewares.SortMostUsedEmojis'
 ]
 
 ROOT_URLCONF = 'whatsappclone.urls'

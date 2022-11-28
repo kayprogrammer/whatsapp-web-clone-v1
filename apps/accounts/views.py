@@ -12,6 +12,7 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from . mixins import LogoutRequiredMixin
 from . senders import Util, email_verification_generate_token
 from . forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomUserCreationForm, PhoneVerificationForm
+import json
 
 User = get_user_model()
 
@@ -50,14 +51,16 @@ class VerifyEmail(LogoutRequiredMixin, View):
             user.is_email_verified = True
             user.save()
             Util.send_sms_otp(user)
+            request.session['phone'] = user.phone
             return redirect(reverse('verify-phone'))
 
-        return render(request, 'accounts/email-activation-failed.html', {"user": user})
+        return render(request, 'accounts/email-activation-failed.html', {"email": user.email})
 
 class VerifyPhone(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        phone = request.session.get('phone')
         try:
-            user = User.objects.get(phone=request.COOKIES.get('phone'))
+            user = User.objects.get(phone=phone)
             form = PhoneVerificationForm(request=request)
             if user.is_phone_verified:
                 return redirect('/')
@@ -67,7 +70,8 @@ class VerifyPhone(LogoutRequiredMixin, View):
             return redirect('/')
 
     def post(self, request, *args, **kwargs):
-        form = PhoneVerificationForm(request.POST, request=request)
+        phone = request.POST.get('phone')
+        form = PhoneVerificationForm(request.POST, request=request, phone=phone)
         if form.is_valid():
             return JsonResponse({'success': True})
         else:
@@ -76,8 +80,11 @@ class VerifyPhone(LogoutRequiredMixin, View):
 
 class ResendActivationEmail(LogoutRequiredMixin, View):
     def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        email = data.get('email')
+
         try:
-            user = User.objects.get(phone=request.COOKIES.get('phone'))
+            user = User.objects.get(email=email)
             if user.is_email_verified:
                 return JsonResponse({'email_verified': True})
 
@@ -88,8 +95,10 @@ class ResendActivationEmail(LogoutRequiredMixin, View):
 
 class ResendOTP(LogoutRequiredMixin, View):
     def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        phone = data.get('phone')
         try:
-            user = User.objects.get(phone=request.COOKIES.get('phone'))
+            user = User.objects.get(phone=phone)
             if user.is_phone_verified:
                 return JsonResponse({'phone_verified': True})
             Util.send_sms_otp(user)
@@ -114,7 +123,8 @@ class LoginView(LogoutRequiredMixin, View):
 
         if not user.is_phone_verified:
             Util.send_sms_otp(user)
-            return JsonResponse({'phone_error': 'Phone not verified. Check Phone Again'})
+            request.session['phone'] = user.phone
+            return JsonResponse({'phone_error': 'Phone not verified. Check Phone Again', 'phone': user.phone})
 
         login(request, user)
         return JsonResponse({'success': 'Login successful'})

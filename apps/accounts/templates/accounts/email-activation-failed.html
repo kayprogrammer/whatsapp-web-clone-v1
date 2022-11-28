@@ -21,6 +21,8 @@
 			$.ajax({
 				url: '/accounts/resend-activation-email/',
 				type: 'POST',
+				data: JSON.stringify({'email':'{{email}}'}),
+				dataType: 'json',
 				success: function(response){
 					console.log(response)
 					if(response?.success){

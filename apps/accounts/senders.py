@@ -45,11 +45,13 @@ class Util:
     
     @staticmethod
     def send_sms_otp(user):
-        otp = random.randint(100000, 999999) 
-        user.otp = otp
-        user.save()
+        code = random.randint(100000, 999999)
+        from . models import Otp 
+        otp, created = Otp.objects.get_or_create(user=user)
+        otp.value = code
+        otp.save()
         message = Message(
-            f'Hello {user.name}! \nYour Phone Verification OTP from {settings.SITE_NAME} is {otp}',
+            f'Hello {user.name}! \nYour Phone Verification OTP from {settings.SITE_NAME} is {code}',
             settings.DEFAULT_FROM_PHONE,
             [user.phone]
         )

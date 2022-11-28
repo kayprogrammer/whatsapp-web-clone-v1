@@ -37,7 +37,6 @@
 				type: 'POST',
 				dataType: 'json',
 				success: function(response){
-					console.log(response)
 					if(response?.success){
 						Toast.fire({
 							icon: 'success',
@@ -64,9 +63,10 @@
 						$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="LOGIN">')
                         Toast.fire({
 							icon: 'error',
-							title: response?.phone_error
+							title: response?.phone_error,
+							timer: 2000
 						}).then(function() {
-							window.location.href = "/accounts/verify-phone/"
+							window.location.href = `/accounts/verify-phone/?phone=${response?.phone}`
 						})
 					}
 				}

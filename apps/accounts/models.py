@@ -71,7 +71,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     terms_agreement = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_phone_verified = models.BooleanField(default=False)
-    otp = models.IntegerField(null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_online = models.DateTimeField(default=timezone.now)
@@ -96,6 +95,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
+
+class Otp(TimeStampedUUIDModel):
+    user = models.ForeignKey(User, models.CASCADE, null=True)
+    value = models.IntegerField(null=True, blank=True, editable=False)
 
 class BlockedContact(TimeStampedUUIDModel):
     blocker = models.ForeignKey(User, related_name='blocker_blocked_contacts', on_delete=models.SET_NULL, null=True)

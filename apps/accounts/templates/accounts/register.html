@@ -66,7 +66,6 @@
 				success: function(response){
 					console.log(response)
 					if(response?.success){
-						document.cookie = 'phone=' + response?.user?.phone + ";domain=;path=/"
 						Swal.fire({
 							title: "Registration successful",
 							text: "Check your email for activation link",

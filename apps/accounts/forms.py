@@ -5,9 +5,10 @@ from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.utils import timezone
 
 from . senders import Util, MessageThread
-from . models import Timezone, User
+from . models import Timezone, User, Otp
 from . validators import phone_regex_pattern
 
 User = get_user_model()
@@ -78,17 +79,27 @@ class PhoneVerificationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.phone = kwargs.pop('phone', None)
         super(PhoneVerificationForm, self).__init__(*args, **kwargs)
 
     def clean_otp(self):
         request = self.request
-        print(request)
-        phone = request.COOKIES.get('phone')
+        phone = self.phone
+        print(phone)
         otp = self.cleaned_data.get('otp')
-        user = User.objects.filter(phone=phone, otp=otp)
-        if not user.exists():
+        try:
+            user = User.objects.get(phone=phone)
+        except:
+            raise ValidationError('Invalid User', code='invalid_user')
+        
+        otp_object = Otp.objects.filter(user=user, value=otp)
+        if not otp_object.exists():
             raise ValidationError('Invalid Otp', code="invalid_otp")
-        user = user.get()
+        otp_object = otp_object.get()
+        diff = timezone.now() - otp_object.created_at
+        if diff.total_seconds() > 900:
+            raise ValidationError('Expired Otp', code="expired_otp") 
+
         user.is_phone_verified = True
         user.save()
         Util.send_welcome_email(request, user)
