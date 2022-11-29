@@ -175,6 +175,24 @@
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div class="block chat-list" onclick="openForm()">
+                    <!-- Img -->
+                    <div class="imgBox">
+                        <img style="object-position: top; object-fit: cover;" src="" class="cover">
+                    </div>
+                    <!-- Text -->
+                    <div class="h-text">
+                        <div class="head">
+                            <h4 title="Welcome" aria-label="Welcome">Click to start chat</h4>
+                        </div>
+                        <div class="message-chat">
+                            <div class="chat-text-icon">
+                                <span class="thanks">Find other users on this platform</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
 
             </div>

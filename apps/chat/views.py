@@ -5,20 +5,17 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.loader import render_to_string
 from django.db.models import Case, F, When, Q, CharField
-from django.utils import timezone
 import pytz
 
 from . models import Message
 from . emojis import emojis
 import json
-import threading
 
 User = get_user_model()
 
 class HomeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # request.session.flush()
-        Message.objects.all().delete()
         user = request.user
         messages = Message.objects.filter(Q(sender=user) | Q(receiver=user)).select_related('sender', 'receiver')
         inbox_list = messages.annotate(other=Case(When(sender=user, then=F('receiver')), default=F('sender'), output_field=CharField())).order_by('other', '-created_at').distinct('other')

@@ -51,7 +51,7 @@ class Util:
         otp.value = code
         otp.save()
         message = Message(
-            f'Hello {user.name}! \nYour Phone Verification OTP from {settings.SITE_NAME} is {code}',
+            f'Hello {user.name}! \nYour Phone Verification OTP from {settings.SITE_NAME} is {code} \nExpires in 15 minutes',
             settings.DEFAULT_FROM_PHONE,
             [user.phone]
         )

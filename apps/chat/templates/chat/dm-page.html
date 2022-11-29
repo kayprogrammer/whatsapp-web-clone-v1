@@ -630,7 +630,7 @@
         $(".hidden").hide();
         var phone = $('#frnd-phone').val()
         var message = $(".send-message")
-        console.log(/\p{Emoji}/u.test(message.val()))
+        // console.log(/\p{Emoji}/u.test(message.val()))
         $.ajax({
             url: "/chat/send-message/",
             method: "POST",
@@ -641,6 +641,7 @@
             dataType: "json",
             success: function(response) {
                 if (response?.success){
+
                     message.val('')
                     $('#chatmessages-list').append(`
                         <p id="last-msg" style="max-width: 45%;" class="chatMessage my-chat">

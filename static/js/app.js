@@ -114,7 +114,9 @@ function openRightSide(e) {
                 $('#rightSide').html(response.html_data)
                 unread_count_element.fadeOut(100)
                 var chat = document.getElementById('last-msg')
-                chat.scrollIntoView()
+                if (chat){
+                    chat.scrollIntoView()
+                }
 
             }
         }
