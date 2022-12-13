@@ -29,7 +29,9 @@ class RegisterView(LogoutRequiredMixin, View):
         if form.is_valid():
             user = form.save()
             Util.send_verification_email(request, user)
+            messages.success(request, 'Registration successful', extra_tags='toast')
             return render(request, 'accounts/email-activation-request.html', {'detail':'sent', 'email':user.email})
+        
         return render(request, "accounts/register.html", {'form': form})
 
 class VerifyEmail(LogoutRequiredMixin, View):
