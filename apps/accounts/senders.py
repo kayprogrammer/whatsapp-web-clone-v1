@@ -35,7 +35,8 @@ class Util:
             'domain':current_site, 
             'site_name': settings.SITE_NAME,
             'uid': urlsafe_base64_encode(force_bytes(user.id)),
-            'token': email_verification_generate_token.make_token(user)
+            'token': email_verification_generate_token.make_token(user),
+            'user_id': user.id
         })
 
         email_message = EmailMessage(subject=subject, body=message, to=[user.email])

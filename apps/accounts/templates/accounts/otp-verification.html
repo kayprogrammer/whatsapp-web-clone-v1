@@ -9,7 +9,7 @@
 			<form method="post" class="otp-form">
 				{% csrf_token %}
 				{{form.otp}}
-				<input type="hidden" value="{{request.session.phone}}" name="phone" />
+				<input type="hidden" value="{{request.session.verification_phone}}" name="phone" />
 				<input type="submit" value="SUBMIT">
 			</form>
 			<p>Didn't get an OTP? <a style="cursor: pointer;" class="resend-otp"> Resend OTP!</a></p>
@@ -24,7 +24,7 @@
 			$.ajax({
 				url: "{% url 'resend-otp' %}",
 				type: 'POST',
-				data: JSON.stringify({'phone': '{{request.session.phone}}'}),
+				data: JSON.stringify({'phone': '{{request.session.verification_phone}}'}),
 				dataType: 'json',
 				success: function(response){
 					console.log(response)

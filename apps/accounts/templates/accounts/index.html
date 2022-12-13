@@ -22,6 +22,21 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!-- //web font -->
 <!--Sweet alert-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<script type="text/javascript">
+	/* Sweetify Toast Config */
+	const Toast = Swal.mixin({
+		toast: true,
+		position: 'top-right',
+		iconColor: 'white',
+		customClass: {
+			popup: 'colored-toast'
+		},
+		showConfirmButton: false,
+		timer: 2000,
+		timerProgressBar: true
+	})
+</script>
 <style>
 	.register-form p, .login-form p:not(:last-child){
 		display: inline-block;
@@ -39,6 +54,35 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 </style>
 </head>
 <body>
+	{% if messages %}
+	{% for message in messages %}
+		{% if message.extra_tags == 'toast' %}
+			<script>
+				Toast.fire({
+					icon: '{{ message.level_tag }}',
+					title: '{{ message }}'
+				})
+			</script>
+		{% else %}
+			<script>
+			
+			Swal.fire({
+		
+				title:"{{ message.tags|title }}!",
+				// success , error , warning ,info
+		
+				text: "{{ message }}",
+				// Custom message flashed from your flask routes
+		
+				icon: "{{ message.tags }}"
+				// success , error , warning ,info
+		
+			})
+		
+			</script>
+		{% endif %}
+	{% endfor %}
+	{% endif %}
 	<!-- main -->
 	<div class="main-w3layouts wrapper">
         {% block content %}
@@ -63,24 +107,10 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	</div>
 	<!-- //main -->
 	<script src="{% static 'vendors/js/jquery-3.6.1.min.js' %}"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
 	<script>
 		$.ajaxSetup({
 			headers: {"X-CSRFToken": '{{csrf_token}}'}
 		})
-
-		/* Sweetify Toast Config */
-		const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-right',
-            iconColor: 'white',
-            customClass: {
-                popup: 'colored-toast'
-            },
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true
-        })
     </script>
     {% block js %}
     {% endblock %}

@@ -60,8 +60,8 @@ class CustomErrorMessages:
         'does_not_exist': 'Invalid timezone',
     }
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(error_messages=CustomErrorMessages.email, widget=forms.EmailInput(attrs={"placeholder": "Email Address", "class": "text email"}))
     name = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Name", "class": "text"}))
+    email = forms.EmailField(error_messages=CustomErrorMessages.email, widget=forms.EmailInput(attrs={"placeholder": "Email Address", "class": "text email"}))
     phone = forms.CharField(error_messages=CustomErrorMessages.phone, max_length=15, validators=[phone_regex_pattern], widget=forms.TextInput(attrs={"placeholder": "Phone Number", "class": "text email"}))
     tz = forms.ModelChoiceField(error_messages=CustomErrorMessages.tz, queryset=Timezone.objects.all())
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Password", "class": "text"}))
@@ -70,7 +70,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ["email", "name", "phone", "tz", "password1", "password2", "terms_agreement"]
+        fields = ["name", "email", "phone", "tz", "password1", "password2", "terms_agreement"]
 
 #----------------------------------------------------------#
 

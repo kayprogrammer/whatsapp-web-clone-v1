@@ -7,19 +7,16 @@
 		<div class="agileits-top">
 			<form method="post" class="register-form">
 				{% csrf_token %}
-				{{form.name}}
-				<p class="name-error"></p>
-				{{form.email}}
-				<p class="email-error"></p>
-				{{form.phone}}
-				<p class="phone-error"></p>
-				{{form.tz}}
-				<p class="tz-error"></p>
-				{{form.password1}}
-				<p class="password1-error"></p>
-				{{form.password2}}
-				<p class="password2-error"></p>
-
+				{% for field in form %}
+					{% if not field.name == 'terms_agreement' %}
+						{{field}}
+						{% for error in field.errors  %}
+							<p style="text-align: left; margin-top: 5px;">{{error}}</p>
+						{% empty %}
+							<p></p>
+						{% endfor %}
+					{% endif %}
+				{% endfor %}
 				<div class="wthree-text" >
 					<label class="anim">
 						{{form.terms_agreement}}
@@ -54,52 +51,52 @@
         }
 
 
-		$('.register-form').on('submit', function(e) {
-			$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP ..." disabled style="pointer-events: none; background-color: #cccccc; border: 1px solid #999999; color: #666666;">')
-			$('.register-form p').html('')
-			e.preventDefault();
-			$.ajax({
-				url: '/accounts/register/',
-				data: $(this).serialize(),
-				type: 'POST',
-				dataType: 'json',
-				success: function(response){
-					console.log(response)
-					if(response?.success){
-						Swal.fire({
-							title: "Registration successful",
-							text: "Check your email for activation link",
-							icon: "success",
-							timer: "3500",
-							button: "Ok"
-						}).then(function(){
-							window.location.href = "/"
-							$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP">')
+		// $('.register-form').on('submit', function(e) {
+		// 	$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP ..." disabled style="pointer-events: none; background-color: #cccccc; border: 1px solid #999999; color: #666666;">')
+		// 	$('.register-form p').html('')
+		// 	e.preventDefault();
+		// 	$.ajax({
+		// 		url: '/accounts/register/',
+		// 		data: $(this).serialize(),
+		// 		type: 'POST',
+		// 		dataType: 'json',
+		// 		success: function(response){
+		// 			console.log(response)
+		// 			if(response?.success){
+		// 				Swal.fire({
+		// 					title: "Registration successful",
+		// 					text: "Check your email for activation link",
+		// 					icon: "success",
+		// 					timer: "3500",
+		// 					button: "Ok"
+		// 				}).then(function(){
+		// 					window.location.href = "/"
+		// 					$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP">')
 
-						})
+		// 				})
 						
-					} else if (response?.errors){
-						errors = JSON.parse(response.errors)
-						Object.keys(errors).forEach(function(key) {
-							var err_message = errors[key][0]['message']
-							var err_code = errors[key][0]['code']
+		// 			} else if (response?.errors){
+		// 				errors = JSON.parse(response.errors)
+		// 				Object.keys(errors).forEach(function(key) {
+		// 					var err_message = errors[key][0]['message']
+		// 					var err_code = errors[key][0]['code']
 
-							$(`.${key}-error`).html(err_message)
-							if(err_code === "password_too_common" || err_code === "password_too_similar"){
-								var password_err_msg = err_message.substring(err_message.indexOf(' ') + 1) // Removes first word in sentence
-								var capitalized_password_err_msg = password_err_msg.charAt(0).toUpperCase() + password_err_msg.slice(1) // Capitalizes the sentence
-								$(`.${key}-error`).html(capitalized_password_err_msg)
-							}
-							if(err_code === "password_mismatch"){
-								$(`.${key}-error`).html("Passwords mismatch")
-							}
-						})
-						$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP">')
-					}
-					;
-				}
+		// 					$(`.${key}-error`).html(err_message)
+		// 					if(err_code === "password_too_common" || err_code === "password_too_similar"){
+		// 						var password_err_msg = err_message.substring(err_message.indexOf(' ') + 1) // Removes first word in sentence
+		// 						var capitalized_password_err_msg = password_err_msg.charAt(0).toUpperCase() + password_err_msg.slice(1) // Capitalizes the sentence
+		// 						$(`.${key}-error`).html(capitalized_password_err_msg)
+		// 					}
+		// 					if(err_code === "password_mismatch"){
+		// 						$(`.${key}-error`).html("Passwords mismatch")
+		// 					}
+		// 				})
+		// 				$('#submit-btn').replaceWith('<input id="submit-btn" type="submit" value="SIGNUP">')
+		// 			}
+		// 			;
+		// 		}
 
-			})
-		})
+		// 	})
+		// })
     </script>
 {% endblock %}

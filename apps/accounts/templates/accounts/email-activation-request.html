@@ -1,0 +1,33 @@
+{% extends "accounts/index.html" %}
+
+{% block title %}
+	{% if detail == 'request' %}
+		Unverified Email Address
+	{% else %}
+		Email Activation Sent
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+	<h1 style="font-weight: bold;">WWC V4 {% if detail == 'request' %}UNVERIFIED EMAIL ADDRESS {% else %}EMAIL ACTIVATION SENT {% endif %}</h1>
+	<div class="main-agileinfo">
+		<div class="agileits-top">
+			<div>
+				{% if detail == 'request' %}
+					<p>Your email address is yet to be verified. Check your email or click below to resend activation link</p>
+				{% else %}
+					<p>Check your email for {% if detail == 'resent' %}new {% endif %}activation link!</p>
+				{% endif %}
+				<input class="resend-email" onclick="window.location=`{% url 'resend-activation-email' %}`" type="submit" value="RESEND ACTIVATION EMAIL">
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block js %}
+	<script>
+		window.onload = function() {
+			document.cookie = 'activation_email=' + '{{email}}' + ";domain=;path=/"
+		}
+	</script>
+{% endblock %}
