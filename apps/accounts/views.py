@@ -19,6 +19,8 @@ User = get_user_model()
 
 class RegisterView(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        # request.session['name'] = 'akdsd'
+        print(request.session.get('name'))
         form = CustomUserCreationForm()
 
         context = {'form': form}
@@ -86,13 +88,17 @@ class VerifyPhone(LogoutRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         phone = request.POST.get('phone')
-        print(f'Yea {phone}')
-
-        form = PhoneVerificationForm(request.POST, request=request, phone=phone)
-        if form.is_valid():
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'error': form.errors.as_json()})
+        try:
+            user = User.objects.get(phone=phone)
+            form = PhoneVerificationForm(request.POST, request=request, user=user)
+            if form.is_valid():
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'error': form.errors.as_json()})
+        except:
+            messages.error(request, 'Something went wrong!')
+            return redirect('/accounts/login/')
+        
 
 class ResendActivationEmail(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -135,9 +141,11 @@ class LoginView(LogoutRequiredMixin, View):
             return redirect('/accounts/login/')
 
         if not user.is_email_verified:
+            Util.send_verification_email(request, user)
             return render(request, 'accounts/email-activation-request.html', {'detail':'request', 'email':user.email})
 
         if not user.is_phone_verified:
+            Util.send_sms_otp(user)
             request.session['verification_phone'] = user.phone
             return redirect(reverse('verify-phone'))
 

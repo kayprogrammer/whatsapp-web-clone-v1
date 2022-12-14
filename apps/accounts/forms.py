@@ -80,23 +80,20 @@ class PhoneVerificationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         self.phone = kwargs.pop('phone', None)
+        self.user = kwargs.pop('user', None)
+
         super(PhoneVerificationForm, self).__init__(*args, **kwargs)
 
     def clean_otp(self):
         request = self.request
-        phone = self.phone
-        print(phone)
+        user = self.user
         otp = self.cleaned_data.get('otp')
-        try:
-            user = User.objects.get(phone=phone)
-        except:
-            raise ValidationError('Invalid User', code='invalid_user')
         
         otp_object = Otp.objects.filter(user=user, value=otp)
         if not otp_object.exists():
             raise ValidationError('Invalid Otp', code="invalid_otp")
         otp_object = otp_object.get()
-        diff = timezone.now() - otp_object.created_at
+        diff = timezone.now() - otp_object.updated_at
         if diff.total_seconds() > 900:
             raise ValidationError('Expired Otp', code="expired_otp") 
 
