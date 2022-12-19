@@ -614,7 +614,7 @@
 
         <input type="text" placeholder="Type a message" class="send-message">
         <button></button>
-        <button type="button" role="button" class="icons">
+        <button type="button" role="button" class="icons record-vn">
             <span class="">
                 <svg viewBox="0 0 24 24" width="24" height="24" class="">
                     <path fill="currentColor"
@@ -625,6 +625,7 @@
         </button>
     </div>
 </form>
+<script src="{% static 'js/audio-recorder.js' %}?{% now 'U' %}"></script>
 
 <script type="text/javascript">    
     $('.chat-footer').on('submit', function(e){
