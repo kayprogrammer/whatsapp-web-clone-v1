@@ -424,14 +424,14 @@
         </div>
     </div>
 
-    <div class="chat-input-wrapper">
-        <div style="margin-left: auto; order: 2; display: flex; align-items: center;">
+    <div class="chat-input-wrapper" id="chat-input-wrapper">
+        <!-- <div style="margin-left: auto; order: 2; display: flex; align-items: center;">
             <i class="fas fa-trash del-record" style="font-size: 1.4em; color: #6c757d; margin-right: 16px; cursor: pointer;"></i>
-            <span style="color: white; font-size: 1.3em;" class="record-counter">0:00</span>
+            <span style="color: white; font-size: 1.3em;" class="record-counter"><span id="minutes">0</span>:<span id="seconds">00</span></span>
             <span style="background-color: white; height: 0.25em; margin-left: 0.5em; margin-right: 0.5em; width: 15em;" class="record-bar"></span>
             <img style="cursor: pointer;" src="{% static 'media/send.png' %}" />
-        </div>
-        <!-- <button type="button" aria-label="Close emojis" class="icons hidden" id="emoji-remove-icon">
+        </div> -->
+        <button type="button" aria-label="Close emojis" class="icons hidden" id="emoji-remove-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
                 class="chat__input-icon">
                 <path fill="currentColor"
@@ -627,7 +627,7 @@
                     </path>
                 </svg>
             </span>
-        </button> -->
+        </button>
     </div>
 </form>
 <script src="{% static 'js/audio-recorder.js' %}?{% now 'U' %}"></script>
